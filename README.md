@@ -1,21 +1,11 @@
 # Tabula
 
-**TODO: Add description**
+Simple staticaly-generated site with boards, lists and cards.
 
-## Installation
+## MVP Description
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `tabula` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:tabula, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/tabula>.
-
+- single board supported
+- one Markdown file per card
+- relations between cards and lists stored in Yaml file
+- script to generate static HTML from MD+YML files
+- script to import data from Trello (parsing exported JSONs)
