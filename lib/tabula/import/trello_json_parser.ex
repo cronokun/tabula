@@ -1,4 +1,4 @@
-defmodule Tabula.TrelloImporter do
+defmodule Tabula.Import.TrelloJsonParser do
   @moduledoc ~S"""
   Extract data from JSON files exported from Trello.
 
@@ -52,9 +52,12 @@ defmodule Tabula.TrelloImporter do
   """
 
   def parse(filepath) do
-    filepath
-    |> read_json()
-    |> convert_to_map()
+    data =
+      filepath
+      |> read_json()
+      |> convert_to_map()
+
+    {:ok, data}
   end
 
   defp read_json(filepath) do
