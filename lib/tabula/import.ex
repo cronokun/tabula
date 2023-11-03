@@ -65,6 +65,6 @@ defmodule Tabula.Import do
   end
 
   defp safe_path(path) when is_binary(path) do
-    path |> String.replace(":", "") |> String.replace("/", " - ")
+    path |> String.replace([":"], "") |> String.replace("/", " - ")
   end
 end

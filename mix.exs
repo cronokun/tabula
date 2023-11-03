@@ -21,7 +21,8 @@ defmodule Tabula.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:earmark, "~> 1.4"}
     ]
   end
 end

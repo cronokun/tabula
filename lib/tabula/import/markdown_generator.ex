@@ -18,7 +18,7 @@ defmodule Tabula.Import.MarkdownGenerator do
   defp description(%{description: desc}), do: [desc, "\n\n"]
 
   defp card_image(%{name: name}) do
-    ["![image](../images/#{safe_file_name(name)}.jpeg)", "\n\n"]
+    ["![image](../_images/#{safe_path(name)}.jpeg)", "\n\n"]
   end
 
   defp checklists(%{checklists: []}), do: []
@@ -65,10 +65,7 @@ defmodule Tabula.Import.MarkdownGenerator do
     ]
   end
 
-  defp safe_file_name(name) do
-    name
-    |> String.replace(~r/[^\w\s]/, "")
-    |> String.replace(~r/\s+/, "-")
-    |> String.downcase()
+  defp safe_path(path) when is_binary(path) do
+    path |> String.replace([":"], "") |> String.replace("/", " - ")
   end
 end
