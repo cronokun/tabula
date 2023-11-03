@@ -45,10 +45,13 @@ defmodule Tabula.Import.MarkdownGenerator do
     [
       "---\n",
       timestamps(data),
+      title(data),
       tags(data),
       "---\n"
     ]
   end
+
+  defp title(%{name: name}), do: ["title: ", safe_path(name), "\n"]
 
   defp tags(%{labels: tags}), do: ["tags: ", Enum.join(tags, ", "), "\n"]
 
@@ -66,6 +69,6 @@ defmodule Tabula.Import.MarkdownGenerator do
   end
 
   defp safe_path(path) when is_binary(path) do
-    path |> String.replace([":"], "") |> String.replace("/", " - ")
+    path |> String.replace(":", " -") |> String.replace("/", " - ")
   end
 end

@@ -22,7 +22,8 @@ defmodule Tabula.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:yaml_elixir, "~> 2.9"}
     ]
   end
 end

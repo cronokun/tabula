@@ -26,12 +26,15 @@ defmodule Tabula.Convert do
     File.write!(output_path, html_content)
   end
 
-  # If file starts with "---\n" extract Front Matter and ignore it for now.
+  # If file starts with "---\n" extract YAML front matter
   defp process_front_matter("---\n" <> content) do
-    content |> String.split("\n---\n") |> List.to_tuple()
+    with [yaml, content] <- String.split(content, "\n---\n"),
+         {:ok, front_matter} <- YamlElixir.read_from_string(yaml) do
+      {front_matter, content}
+    end
   end
 
-  defp process_front_matter(content), do: {"", content}
+  defp process_front_matter(content), do: {%{}, content}
 
   defp parse({front_matter, content}) do
     {front_matter, Earmark.as_html!(content)}
@@ -42,7 +45,7 @@ defmodule Tabula.Convert do
   <html lang="en">
   <head>
     <meta charset=utf-8>
-    <title>Example Page Title</title>
+    <title><%= @title %></title>
   </head>
   <body>
   """
@@ -52,7 +55,17 @@ defmodule Tabula.Convert do
   </html>
   """
 
-  defp wrap_content({_front_matter, content}) do
-    [@html_layout_before, content, @html_layout_after]
+  defp wrap_content({front_matter, content}) do
+    [
+      @html_layout_before |> update_title(front_matter),
+      content,
+      @html_layout_after
+    ]
+  end
+
+  defp update_title(layout, front_matter) do
+    title = Map.get(front_matter, "title", "Untitled")
+    # FIXME: this is very naive!
+    String.replace(layout, "<%= @title %>", title)
   end
 end
