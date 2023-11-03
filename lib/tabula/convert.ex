@@ -20,6 +20,7 @@ defmodule Tabula.Convert do
       input_path
       |> File.read!()
       |> process_front_matter()
+      |> preparse()
       |> parse()
       |> wrap_content()
 
@@ -35,6 +36,26 @@ defmodule Tabula.Convert do
   end
 
   defp process_front_matter(content), do: {%{}, content}
+
+  defp preparse({front_matter, content}) do
+    front_matter =
+      front_matter
+      |> Map.put("title", get_title_from_header(content))
+      |> Map.put("tags", split_tags(front_matter))
+
+    {front_matter, content}
+  end
+
+  defp get_title_from_header(content) do
+    case Regex.run(~r/^# ([^\n]+)\n/, content, capture: :all_but_first) do
+      [title] -> title
+      nil -> "Untitled"
+    end
+  end
+
+  defp split_tags(front_matter) do
+    Map.update(front_matter, "tags", [], fn tags -> String.split(tags, ", ") end)
+  end
 
   defp parse({front_matter, content}) do
     {front_matter, Earmark.as_html!(content)}
@@ -63,8 +84,7 @@ defmodule Tabula.Convert do
     ]
   end
 
-  defp update_title(layout, front_matter) do
-    title = Map.get(front_matter, "title", "Untitled")
+  defp update_title(layout, %{"title" => title}) do
     # FIXME: this is very naive!
     String.replace(layout, "<%= @title %>", title)
   end
