@@ -23,6 +23,7 @@ defmodule Tabula.Convert do
       input_path
       |> File.read!()
       |> parse_front_matter()
+      |> process_front_matter()
       |> convert()
 
     File.write!(output_path, html_content)
@@ -31,25 +32,20 @@ defmodule Tabula.Convert do
   # If file starts with "---\n" extract YAML front matter
   defp parse_front_matter("---\n" <> content) do
     with [yaml, content] <- String.split(content, "\n---\n"),
-         {:ok, front_matter} <- YamlElixir.read_from_string(yaml),
-         context <- process_front_matter({front_matter, content}) do
-      {context, content}
+         {:ok, front_matter} <- YamlElixir.read_from_string(yaml) do
+      {front_matter, content}
     end
   end
 
   defp parse_front_matter(content), do: {%{}, content}
 
-  defp convert({context, content}) do
-    with ast <- Parser.parse(content),
-         html <- Renderer.to_html(ast, context) do
-      html
-    end
-  end
-
   defp process_front_matter({context, content}) do
-    context
-    |> Map.put("title", get_title_from_header(content))
-    |> Map.put("tags", split_tags(context))
+    context =
+      context
+      |> Map.put("title", get_title_from_header(content))
+      |> Map.put("tags", split_tags(context))
+
+    {context, content}
   end
 
   defp get_title_from_header(content) do
@@ -61,5 +57,12 @@ defmodule Tabula.Convert do
 
   defp split_tags(context) do
     Map.update(context, "tags", [], fn tags -> String.split(tags || "", ", ") end)
+  end
+
+  defp convert({context, content}) do
+    with ast <- Parser.parse(content),
+         html <- Renderer.to_html(ast, context) do
+      html
+    end
   end
 end

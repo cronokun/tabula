@@ -1,35 +1,37 @@
+defmodule Tabula.Board.Card do
+  @enforce_keys [:title, :path]
+  defstruct [:title, :path]
+end
+
+defmodule Tabula.Board.List do
+  @enforce_keys [:name]
+  defstruct name: nil, path: nil, cards: []
+end
+
 defmodule Tabula.Board do
-  defmodule Card do
-    @enforce_keys [:title, :path]
-    defstruct [:title, :path]
-  end
-
-  defmodule List do
-    @enforce_keys [:name]
-    defstruct name: nil, path: nil, cards: []
-  end
-
   @enforce_keys [:name, :dir]
   defstruct name: nil, dir: nil, lists: []
+
+  alias Tabula.Board.Card
+  alias Tabula.Board.List, as: BList
 
   def build(data, dir) do
     %__MODULE__{
       name: data["board"],
       dir: dir,
       lists:
-        for list <- data["lists"] do
+        for list <- List.wrap(data["lists"]) do
           list_path = list["path"] || safe_path(list["name"])
 
-          %List{
+          %BList{
             name: list["name"],
             path: list_path,
             cards:
-              for card <- list["cards"] do
+              for card <- List.wrap(list["cards"]) do
                 %Card{
                   title: card,
                   path:
                     Path.join([
-                      safe_path(data["board"]),
                       list_path,
                       safe_path(card)
                     ])

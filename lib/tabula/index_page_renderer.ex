@@ -1,19 +1,7 @@
-defmodule Tabula.Builder do
+defmodule Tabula.IndexPageRenderer do
   @moduledoc ~S"""
-  Build as "site" or "board": convert MD files to HTML, create `index.html`,
-  copy assets, etc.
+  Render index.html page for the board.
   """
-
-  alias Tabula.Board
-
-  def run(board_path) do
-    with {:ok, yml} <- File.read(board_path),
-         {:ok, data} <- YamlElixir.read_from_string(yml),
-         board <- Board.build(data, Path.dirname(board_path)),
-         :ok <- create_index_page(board) do
-      :ok
-    end
-  end
 
   @index_html_layout_before ~S"""
   <!doctype html>
@@ -31,16 +19,12 @@ defmodule Tabula.Builder do
   </html>
   """
 
-  defp create_index_page(board) do
-    html = [
+  def to_html(board) do
+    [
       set_page_title(@index_html_layout_before, board.name),
       lists_to_html(board.lists),
       @index_html_layout_after
     ]
-
-    path = Path.join(board.dir, "index.html")
-    File.write!(path, html)
-    :ok
   end
 
   defp lists_to_html(lists) do
@@ -49,7 +33,7 @@ defmodule Tabula.Builder do
         "<h2>#{list.name}</h2>\n",
         "<ul>\n",
         for card <- list.cards do
-          card_path = "file:///Users/crono/Developer/tabula/priv/_boards/" <> card.path <> ".html"
+          card_path = card.path <> ".html"
           ~s(<li><a href="#{card_path}" title="#{card.title}">#{card.title}</a></li>\n)
         end,
         "</ul>\n"
