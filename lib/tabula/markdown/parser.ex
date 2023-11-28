@@ -6,8 +6,7 @@ defmodule Tabula.Markdown.Parser do
   def parse(content) when is_binary(content) do
     content
     |> parse_markdown()
-    |> Enum.reduce([], fn block, acc -> [_parse(block) | acc] end)
-    |> Enum.reverse()
+    |> parse_ast()
   end
 
   defp parse_markdown(content) do
@@ -15,7 +14,13 @@ defmodule Tabula.Markdown.Parser do
     ast
   end
 
-  defp _parse({"ul", attrs, content, meta}) do
+  defp parse_ast(ast) do
+    ast
+    |> Enum.reduce([], fn block, acc -> [parse_block(block) | acc] end)
+    |> Enum.reverse()
+  end
+
+  defp parse_block({"ul", attrs, content, meta}) do
     parsed_content =
       content
       |> Enum.reduce([], fn li, acc -> [_parse_li(li) | acc] end)
@@ -24,7 +29,14 @@ defmodule Tabula.Markdown.Parser do
     {"ul", attrs, parsed_content, meta}
   end
 
-  defp _parse(block), do: block
+  defp parse_block({"p", attrs, content, meta} = block) do
+    case _parse_description_list(content) do
+      {:ok, list} -> {"dl", attrs, list, meta}
+      _ -> block
+    end
+  end
+
+  defp parse_block(block), do: block
 
   @checked_checkbox {
     "input",
@@ -57,4 +69,81 @@ defmodule Tabula.Markdown.Parser do
   end
 
   defp _parse_li(li), do: li
+
+  # TODO: retire in favor of generic list parse
+  # defp _parse_description_list([content]) when is_binary(content) do
+  #   if definition_list?(content) do
+  #     {:ok, split_string_to_dt_dd(content)}
+  #   else
+  #     :nope
+  #   end
+  # end
+
+  defp _parse_description_list(content) when is_list(content) do
+    if definition_list?(content) do
+      list =
+        content
+        |> Enum.map(fn i ->
+          if is_binary(i) do
+            String.split(i, "\n")
+          else
+            i
+          end
+        end)
+        |> List.flatten()
+
+      {:ok, split_list_to_dt_dd(list)}
+    else
+      :nope
+    end
+  end
+
+  @dl_regex ~r/\b::\s+/
+
+  defp split_list_to_dt_dd(list, acc \\ [], dacc \\ [])
+
+  defp split_list_to_dt_dd([], acc, dacc) do
+    Enum.reverse([{"dd", [], Enum.reverse(dacc), %{}} | acc])
+  end
+
+  defp split_list_to_dt_dd([head | tail], acc, dacc) when is_tuple(head) do
+    split_list_to_dt_dd(tail, acc, [head | dacc])
+  end
+
+  defp split_list_to_dt_dd([head | tail], acc, dacc) when is_binary(head) do
+    {acc, dacc} =
+      head
+      |> String.split(@dl_regex)
+      |> process_dt_dd(acc, dacc)
+
+    split_list_to_dt_dd(tail, acc, dacc)
+  end
+
+  defp process_dt_dd([desc], acc, dacc), do: {acc, [desc | dacc]}
+
+  defp process_dt_dd([term, ""], acc, []) do
+    dt = {"dt", [], [term], %{}}
+    {[dt | acc], []}
+  end
+
+  defp process_dt_dd([term, ""], acc, dacc) do
+    dd = {"dd", [], Enum.reverse(dacc), %{}}
+    dt = {"dt", [], [term], %{}}
+    {[dt | [dd | acc]], []}
+  end
+
+  defp process_dt_dd([term, desc], acc, []) do
+    dt = {"dt", [], [term], %{}}
+    {[dt | acc], [desc]}
+  end
+
+  defp process_dt_dd([term, desc], acc, dacc) do
+    dd = {"dd", [], Enum.reverse(dacc), %{}}
+    dt = {"dt", [], [term], %{}}
+    {[dt | [dd | acc]], [desc]}
+  end
+
+  defp definition_list?(content) when is_list(content) do
+    content |> Enum.filter(&is_binary/1) |> Enum.any?(&String.match?(&1, @dl_regex))
+  end
 end

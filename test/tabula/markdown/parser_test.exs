@@ -59,6 +59,53 @@ defmodule Tabula.Markdown.ParserTest do
            ] = ast
   end
 
+  test ".parse/1 parses description lists" do
+    ast
+
+    Parser.parse(~S"""
+    Genre:: Adventure, Role Playing, Strategy
+    Developer:: Larian Studios
+    Publisher:: Larian Studios
+    Release Date:: 3 Aug, 2023
+    Platform:: Steam, macOS
+    """)
+
+    assert [
+             {"dl", [],
+              [
+                {"dt", [], ["Genre"], %{}},
+                {"dd", [], ["Adventure, Role Playing, Strategy"], %{}},
+                {"dt", [], ["Developer"], %{}},
+                {"dd", [], ["Larian Studios"], %{}},
+                {"dt", [], ["Publisher"], %{}},
+                {"dd", [], ["Larian Studios"], %{}},
+                {"dt", [], ["Release Date"], %{}},
+                {"dd", [], ["3 Aug, 2023"], %{}},
+                {"dt", [], ["Platform"], %{}},
+                {"dd", [], ["Steam, macOS"], %{}}
+              ], %{}}
+           ] = ast
+  end
+
+  test ".parse/1 correctly parses Markdown inside description lists" do
+    ast =
+      Parser.parse(~S"""
+      Foobar:: This is **bold!** move
+      Link:: https://example.com/
+      """)
+
+    assert [
+             {"dl", [],
+              [
+                {"dt", [], ["Foobar"], %{}},
+                {"dd", [], ["This is ", {"strong", [], ["bold!"], %{}}, " move"], %{}},
+                {"dt", [], ["Link"], %{}},
+                {"dd", [],
+                 [{"a", [{"href", "https://example.com/"}], ["https://example.com/"], %{}}], %{}}
+              ], %{}}
+           ] = ast
+  end
+
   test ".parse/1 otherwise parses Markdown as usual" do
     ast =
       Parser.parse(~S"""
