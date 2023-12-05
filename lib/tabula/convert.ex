@@ -19,14 +19,17 @@ defmodule Tabula.Convert do
   end
 
   def convert_file(input_path, output_path) do
-    html_content =
-      input_path
-      |> File.read!()
-      |> parse_front_matter()
-      |> process_front_matter()
-      |> convert()
+    case File.read(input_path) do
+      {:ok, content} ->
+        html_content =
+          content
+          |> parse_front_matter()
+          |> process_front_matter()
+          |> convert()
 
-    File.write!(output_path, html_content)
+        File.write!(output_path, html_content)
+      {:error, _} -> :skipped
+    end
   end
 
   # If file starts with "---\n" extract YAML front matter
