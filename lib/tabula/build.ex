@@ -43,7 +43,7 @@ defmodule Tabula.Build do
       output_path = card_dest_path(board, card)
       IO.puts("converting \"#{card.path}\"")
       r = Convert.convert_file(card_path, output_path)
-      if r == :skipped, do: IO.puts("...ERROR! Card is skipped.")
+      if r == :skipped, do: IO.puts("  [WARNING] Can't convert card; skipping.")
     end
 
     :ok
