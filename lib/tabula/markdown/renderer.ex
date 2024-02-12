@@ -4,8 +4,9 @@ defmodule Tabula.Markdown.Renderer do
   """
 
   def to_html(ast, context \\ %{}, layout \\ false) do
-    opts = %{level: 0, pad: "    ", inline: false}
-    html = ast_to_string(ast, opts)
+    pad_level = if layout, do: 1, else: 0
+    opts = %{level: pad_level, pad: "    ", inline: false}
+    html = ast_to_string(ast, opts) |> String.trim_trailing()
 
     if layout do
       into_html_document(html, context)
@@ -61,9 +62,7 @@ defmodule Tabula.Markdown.Renderer do
   defp pad_line(line, %{level: level, pad: padding, inline: false}),
     do: String.duplicate(padding, level) <> line <> "\n"
 
-  # --- Etc ---
-
-  @html_layout_before ~S"""
+  @layout ~S"""
   <!doctype html>
   <html lang="en">
   <head>
@@ -71,23 +70,12 @@ defmodule Tabula.Markdown.Renderer do
       <title><%= @title %></title>
   </head>
   <body>
-  """
-
-  @html_layout_after ~S"""
+  <%= @inner_content %>
   </body>
   </html>
   """
 
-  defp into_html_document(content, context) do
-    IO.iodata_to_binary([
-      update_title(@html_layout_before, context),
-      content,
-      @html_layout_after
-    ])
-  end
-
-  defp update_title(layout, %{"title" => title}) do
-    # FIXME: this is very naive!
-    String.replace(layout, "<%= @title %>", title)
+  defp into_html_document(content, %{"title" => title}) do
+    EEx.eval_string(@layout, assigns: [inner_content: content, title: title]) |> String.trim()
   end
 end

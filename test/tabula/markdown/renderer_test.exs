@@ -5,17 +5,17 @@ defmodule Tabula.Markdown.RendererTest do
 
   test ".to_html/1 renders inline tags" do
     ast = [{"strong", [], ["foobar"], %{}}]
-    assert Renderer.to_html(ast) == "<strong>foobar</strong>\n"
+    assert Renderer.to_html(ast) == "<strong>foobar</strong>"
   end
 
   test ".to_html/1 renders tag attributes" do
     ast = [{"p", [{"class", "foobar"}], ["All your base are belong to us!"], %{}}]
 
-    assert Renderer.to_html(ast) == ~S"""
+    assert Renderer.to_html(ast) == String.trim(~S"""
            <p class="foobar">
                All your base are belong to us!
            </p>
-           """
+           """)
 
     ast = [
       {"a", [{"href", "https://localhost/foobar"}, {"class", "main-link"}], ["Foobar (local)"],
@@ -23,15 +23,15 @@ defmodule Tabula.Markdown.RendererTest do
     ]
 
     assert Renderer.to_html(ast) ==
-             "<a href=\"https://localhost/foobar\" class=\"main-link\">Foobar (local)</a>\n"
+             "<a href=\"https://localhost/foobar\" class=\"main-link\">Foobar (local)</a>"
   end
 
   test ".to_html/1 renders tags without content" do
     ast = [{"img", [{"src", "../images/movie-poster.jpeg"}, {"alt", "poster"}], [], %{}}]
-    assert Renderer.to_html(ast) == ~s{<img src="../images/movie-poster.jpeg" alt="poster">\n}
+    assert Renderer.to_html(ast) == ~s{<img src="../images/movie-poster.jpeg" alt="poster">}
 
     ast = [{"hr", [], [], %{}}]
-    assert Renderer.to_html(ast) == "<hr>\n"
+    assert Renderer.to_html(ast) == "<hr>"
   end
 
   test ".to_html/1 renders simple multiline tags" do
@@ -44,13 +44,13 @@ defmodule Tabula.Markdown.RendererTest do
        ], %{}}
     ]
 
-    assert Renderer.to_html(ast) == ~S"""
+    assert Renderer.to_html(ast) == String.trim(~S"""
            <ul>
                <li>Foo</li>
                <li>Bar</li>
                <li>Car</li>
            </ul>
-           """
+           """)
   end
 
   test ".to_html/1 render multiline checklists" do
@@ -66,7 +66,7 @@ defmodule Tabula.Markdown.RendererTest do
        ], %{}}
     ]
 
-    assert Renderer.to_html(ast) == ~S"""
+    assert Renderer.to_html(ast) == String.trim(~S"""
            <ul>
                <li>
                    <input checked="" disabled="" type="checkbox">
@@ -74,7 +74,7 @@ defmodule Tabula.Markdown.RendererTest do
                    : Collect all Trophies.
                </li>
            </ul>
-           """
+           """)
   end
 
   test ".to_html/1 renders multiline content with proper indent" do
@@ -98,7 +98,7 @@ defmodule Tabula.Markdown.RendererTest do
     ]
 
     assert Renderer.to_html(ast) ==
-             ~S"""
+             String.trim(~S"""
              <section id="section-1">
                  <h1>
                      Section 1
@@ -118,13 +118,14 @@ defmodule Tabula.Markdown.RendererTest do
                      <li>car</li>
                  </ul>
              </section>
-             """
+             """)
   end
 
   test ".to_html/1 renders layout if option passed" do
     ast = [{"h1", [], ["All Your Base Are Belong to Us!"], %{}}]
 
-    assert Renderer.to_html(ast, %{"title" => "Test"}, true) == ~S"""
+    assert Renderer.to_html(ast, %{"title" => "Test"}, true) ==
+           String.trim(~S"""
            <!doctype html>
            <html lang="en">
            <head>
@@ -132,11 +133,11 @@ defmodule Tabula.Markdown.RendererTest do
                <title>Test</title>
            </head>
            <body>
-           <h1>
-               All Your Base Are Belong to Us!
-           </h1>
+               <h1>
+                   All Your Base Are Belong to Us!
+               </h1>
            </body>
            </html>
-           """
+           """)
   end
 end
