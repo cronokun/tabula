@@ -28,7 +28,9 @@ defmodule Tabula.Convert do
           |> convert()
 
         File.write!(output_path, html_content)
-      {:error, _} -> :skipped
+
+      {:error, _} ->
+        :skipped
     end
   end
 
@@ -64,7 +66,7 @@ defmodule Tabula.Convert do
 
   defp convert({context, content}) do
     with ast <- Parser.parse(content),
-         html <- Renderer.to_html(ast, context) do
+         html <- Renderer.to_html(ast, context, true) do
       html
     end
   end

@@ -10,7 +10,7 @@ defmodule Tabula.Markdown.Parser do
   end
 
   defp parse_markdown(content) do
-    {:ok, ast, _} = Earmark.Parser.as_ast(content)
+    {:ok, ast, _} = EarmarkParser.as_ast(content)
     ast
   end
 
@@ -69,15 +69,6 @@ defmodule Tabula.Markdown.Parser do
   end
 
   defp _parse_li(li), do: li
-
-  # TODO: retire in favor of generic list parse
-  # defp _parse_description_list([content]) when is_binary(content) do
-  #   if definition_list?(content) do
-  #     {:ok, split_string_to_dt_dd(content)}
-  #   else
-  #     :nope
-  #   end
-  # end
 
   defp _parse_description_list(content) when is_list(content) do
     if definition_list?(content) do

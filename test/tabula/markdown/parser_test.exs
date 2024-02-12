@@ -60,15 +60,14 @@ defmodule Tabula.Markdown.ParserTest do
   end
 
   test ".parse/1 parses description lists" do
-    ast
-
-    Parser.parse(~S"""
-    Genre:: Adventure, Role Playing, Strategy
-    Developer:: Larian Studios
-    Publisher:: Larian Studios
-    Release Date:: 3 Aug, 2023
-    Platform:: Steam, macOS
-    """)
+    ast =
+      Parser.parse(~S"""
+      Genre:: Adventure, Role Playing, Strategy
+      Developer:: Larian Studios
+      Publisher:: Larian Studios
+      Release Date:: 3 Aug, 2023
+      Platform:: Steam, macOS
+      """)
 
     assert [
              {"dl", [],
