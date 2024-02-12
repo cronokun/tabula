@@ -3,45 +3,43 @@ defmodule Tabula.IndexPageRenderer do
   Render index.html page for the board.
   """
 
-  @index_html_layout_before ~S"""
+  alias Tabula.Markdown.Renderer
+
+  @layout ~S"""
   <!doctype html>
   <html lang="en">
   <head>
-    <meta charset=utf-8>
-    <title><%= @board_title %></title>
+      <meta charset=utf-8>
+      <title><%= @board_title %></title>
   </head>
   <body>
-  <h1><%= @board_title %></h1>
-  """
-
-  @index_html_layout_after ~S"""
+  <h1>
+       <%= @board_title %>
+  </h1>
+  <%= @inner_content %>
   </body>
   </html>
   """
 
   def to_html(board) do
-    [
-      set_page_title(@index_html_layout_before, board.name),
-      lists_to_html(board.lists),
-      @index_html_layout_after
-    ]
+    content = lists_to_html(board.lists)
+    EEx.eval_string(@layout, assigns: [board_title: board.name, inner_content: content]) |> String.trim_trailing()
   end
 
   defp lists_to_html(lists) do
-    for list <- lists do
-      [
-        "<h2>#{list.name}</h2>\n",
-        "<ul>\n",
-        for card <- list.cards do
-          card_path = card.path <> ".html"
-          ~s(<li><a href="#{card_path}" title="#{card.title}">#{card.title}</a></li>\n)
-        end,
-        "</ul>\n"
-      ]
-    end
+    lists
+    |> Enum.map(&list_ast/1)
+    |> Renderer.to_html()
   end
 
-  defp set_page_title(html, title) do
-    String.replace(html, "<%= @board_title %>", title)
+  defp list_ast(list) do
+    [
+      {"h2", [], [list.name], %{}},
+      {"ul", [], Enum.map(list.cards, &card_ast/1), %{}}
+    ]
+  end
+
+  defp card_ast(card) do
+    {"li", [], [ {"a", [{"href", "#{card.path}.html"}, {"title", card.title}], [card.title], %{}}], %{}}
   end
 end
