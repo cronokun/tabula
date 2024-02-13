@@ -26,7 +26,7 @@ defmodule Tabula.Markdown.ParserTest do
       """)
 
     assert [
-             {"ul", [],
+             {"ul", [{"class", "checklist"}],
               [
                 {"li", [], [@checked_checkbox, " foo"], %{}},
                 {"li", [], [@unchecked_checkbox, " bar"], %{}},
@@ -43,7 +43,7 @@ defmodule Tabula.Markdown.ParserTest do
       """)
 
     assert [
-             {"ul", [],
+             {"ul", [{"class", "checklist"}],
               [
                 {"li", [],
                  [

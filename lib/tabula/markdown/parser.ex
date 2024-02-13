@@ -21,12 +21,15 @@ defmodule Tabula.Markdown.Parser do
   end
 
   defp parse_block({"ul", attrs, content, meta}) do
-    parsed_content =
-      content
-      |> Enum.reduce([], fn li, acc -> [_parse_li(li) | acc] end)
-      |> Enum.reverse()
+    {lis, res} =
+      Enum.reduce(content, {[], nil}, fn li, {acc, res} ->
+        {li, r} =_parse_li(li)
+        {[li | acc], res || r}
+        end)
 
-    {"ul", attrs, parsed_content, meta}
+    attrs = if res == :checklist, do: [{"class", "checklist"} | attrs], else: attrs
+
+    {"ul", attrs, Enum.reverse(lis), meta}
   end
 
   defp parse_block({"p", attrs, content, meta} = block) do
@@ -37,6 +40,8 @@ defmodule Tabula.Markdown.Parser do
   end
 
   defp parse_block(block), do: block
+
+  # --- Checklist ---
 
   @checked_checkbox {
     "input",
@@ -53,22 +58,24 @@ defmodule Tabula.Markdown.Parser do
   }
 
   defp _parse_li({"li", attrs, ["[ ] " <> content], meta}) when is_binary(content) do
-    {"li", attrs, [@unchecked_checkbox, " " <> content], meta}
+    {{"li", attrs, [@unchecked_checkbox, " " <> content], meta}, :checklist}
   end
 
   defp _parse_li({"li", attrs, ["[x] " <> content], meta}) when is_binary(content) do
-    {"li", attrs, [@checked_checkbox, " " <> content], meta}
+    {{"li", attrs, [@checked_checkbox, " " <> content], meta}, :checklist}
   end
 
   defp _parse_li({"li", attrs, ["[ ] " | content], meta}) do
-    {"li", attrs, [@unchecked_checkbox, content], meta}
+    {{"li", attrs, [@unchecked_checkbox, content], meta}, :checklist}
   end
 
   defp _parse_li({"li", attrs, ["[x] " | content], meta}) do
-    {"li", attrs, [@checked_checkbox, content], meta}
+    {{"li", attrs, [@checked_checkbox, content], meta}, :checklist}
   end
 
-  defp _parse_li(li), do: li
+  defp _parse_li(li), do: {li, nil}
+
+  # --- Description list ---
 
   defp _parse_description_list(content) when is_list(content) do
     if definition_list?(content) do
