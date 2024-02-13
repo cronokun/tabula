@@ -67,6 +67,7 @@ defmodule Tabula.Markdown.Renderer do
   <html lang="en">
   <head>
       <meta charset=utf-8>
+      <link rel="stylesheet" href="../../_assets/card.css">
       <title><%= @title %></title>
   </head>
   <body>

@@ -130,6 +130,7 @@ defmodule Tabula.Markdown.RendererTest do
            <html lang="en">
            <head>
                <meta charset=utf-8>
+               <link rel="stylesheet" href="../../_assets/card.css">
                <title>Test</title>
            </head>
            <body>

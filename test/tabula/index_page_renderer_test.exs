@@ -80,6 +80,7 @@ defmodule Tabula.IndexPageRendererTest do
     <html lang="en">
     <head>
         <meta charset=utf-8>
+        <link rel="stylesheet" href="../_assets/board.css">
         <title>Videogames</title>
     </head>
     <body>

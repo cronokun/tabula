@@ -10,6 +10,7 @@ defmodule Tabula.IndexPageRenderer do
   <html lang="en">
   <head>
       <meta charset=utf-8>
+      <link rel="stylesheet" href="../_assets/board.css">
       <title><%= @board_title %></title>
   </head>
   <body>
