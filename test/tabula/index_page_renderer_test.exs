@@ -72,80 +72,81 @@ defmodule Tabula.IndexPageRendererTest do
             }
           ]
         }
-        ]
-      }
+      ]
+    }
 
-    assert IndexPageRenderer.to_html(board) == String.trim_trailing(~S"""
-    <!doctype html>
-    <html lang="en">
-    <head>
-        <meta charset=utf-8>
-        <link rel="stylesheet" href="../_assets/board.css">
-        <title>Videogames</title>
-    </head>
-    <body>
-    <h1>
-         Videogames
-    </h1>
-    <h2>
-        Wantlist
-    </h2>
-    <ul>
-        <li>
-            <a href="Wantlist/Alan Wake 2.html" title="Alan Wake 2">Alan Wake 2</a>
-        </li>
-    </ul>
-    <h2>
-        Backlog
-    </h2>
-    <ul>
-        <li>
-            <a href="Backlog/The Last of Us Part I.html" title="The Last of Us Part I">The Last of Us Part I</a>
-        </li>
-        <li>
-            <a href="Backlog/The Last of Us Part II Remastered.html" title="The Last of Us Part II Remastered">The Last of Us Part II Remastered</a>
-        </li>
-    </ul>
-    <h2>
-        Playing
-    </h2>
-    <ul>
-        <li>
-            <a href="Playing/Pathfinder Kingmaker.html" title="Pathfinder Kingmaker">Pathfinder Kingmaker</a>
-        </li>
-    </ul>
-    <h2>
-        Finished
-    </h2>
-    <ul>
-        <li>
-            <a href="Finished/Oxenfree II Lost Signals.html" title="Oxenfree II: Lost Signals">Oxenfree II: Lost Signals</a>
-        </li>
-        <li>
-            <a href="Finished/Hogwarts Legacy.html" title="Hogwarts Legacy">Hogwarts Legacy</a>
-        </li>
-        <li>
-            <a href="Finished/Dead Space.html" title="Dead Space">Dead Space</a>
-        </li>
-        <li>
-            <a href="Finished/The Callisto Protocol.html" title="The Callisto Protocol">The Callisto Protocol</a>
-        </li>
-    </ul>
-    <h2>
-        Replay
-    </h2>
-    <ul>
-    </ul>
-    <h2>
-        Dropped
-    </h2>
-    <ul>
-        <li>
-            <a href="Dropped/Baldur's Gate 3.html" title="Baldur's Gate 3">Baldur's Gate 3</a>
-        </li>
-    </ul>
-    </body>
-    </html>
-    """)
+    assert IndexPageRenderer.to_html(board) ==
+             String.trim_trailing(~S"""
+             <!doctype html>
+             <html lang="en">
+             <head>
+                 <meta charset=utf-8>
+                 <link rel="stylesheet" href="../assets/css/board.css">
+                 <title>Videogames</title>
+             </head>
+             <body>
+             <h1>
+                  Videogames
+             </h1>
+             <h2>
+                 Wantlist
+             </h2>
+             <ul>
+                 <li>
+                     <a href="Wantlist/Alan Wake 2.html" title="Alan Wake 2">Alan Wake 2</a>
+                 </li>
+             </ul>
+             <h2>
+                 Backlog
+             </h2>
+             <ul>
+                 <li>
+                     <a href="Backlog/The Last of Us Part I.html" title="The Last of Us Part I">The Last of Us Part I</a>
+                 </li>
+                 <li>
+                     <a href="Backlog/The Last of Us Part II Remastered.html" title="The Last of Us Part II Remastered">The Last of Us Part II Remastered</a>
+                 </li>
+             </ul>
+             <h2>
+                 Playing
+             </h2>
+             <ul>
+                 <li>
+                     <a href="Playing/Pathfinder Kingmaker.html" title="Pathfinder Kingmaker">Pathfinder Kingmaker</a>
+                 </li>
+             </ul>
+             <h2>
+                 Finished
+             </h2>
+             <ul>
+                 <li>
+                     <a href="Finished/Oxenfree II Lost Signals.html" title="Oxenfree II: Lost Signals">Oxenfree II: Lost Signals</a>
+                 </li>
+                 <li>
+                     <a href="Finished/Hogwarts Legacy.html" title="Hogwarts Legacy">Hogwarts Legacy</a>
+                 </li>
+                 <li>
+                     <a href="Finished/Dead Space.html" title="Dead Space">Dead Space</a>
+                 </li>
+                 <li>
+                     <a href="Finished/The Callisto Protocol.html" title="The Callisto Protocol">The Callisto Protocol</a>
+                 </li>
+             </ul>
+             <h2>
+                 Replay
+             </h2>
+             <ul>
+             </ul>
+             <h2>
+                 Dropped
+             </h2>
+             <ul>
+                 <li>
+                     <a href="Dropped/Baldur's Gate 3.html" title="Baldur's Gate 3">Baldur's Gate 3</a>
+                 </li>
+             </ul>
+             </body>
+             </html>
+             """)
   end
 end

@@ -11,11 +11,12 @@ defmodule Tabula.Markdown.RendererTest do
   test ".to_html/1 renders tag attributes" do
     ast = [{"p", [{"class", "foobar"}], ["All your base are belong to us!"], %{}}]
 
-    assert Renderer.to_html(ast) == String.trim(~S"""
-           <p class="foobar">
-               All your base are belong to us!
-           </p>
-           """)
+    assert Renderer.to_html(ast) ==
+             String.trim(~S"""
+             <p class="foobar">
+                 All your base are belong to us!
+             </p>
+             """)
 
     ast = [
       {"a", [{"href", "https://localhost/foobar"}, {"class", "main-link"}], ["Foobar (local)"],
@@ -27,9 +28,6 @@ defmodule Tabula.Markdown.RendererTest do
   end
 
   test ".to_html/1 renders tags without content" do
-    ast = [{"img", [{"src", "../images/movie-poster.jpeg"}, {"alt", "poster"}], [], %{}}]
-    assert Renderer.to_html(ast) == ~s{<img src="../images/movie-poster.jpeg" alt="poster">}
-
     ast = [{"hr", [], [], %{}}]
     assert Renderer.to_html(ast) == "<hr>"
   end
@@ -44,13 +42,14 @@ defmodule Tabula.Markdown.RendererTest do
        ], %{}}
     ]
 
-    assert Renderer.to_html(ast) == String.trim(~S"""
-           <ul>
-               <li>Foo</li>
-               <li>Bar</li>
-               <li>Car</li>
-           </ul>
-           """)
+    assert Renderer.to_html(ast) ==
+             String.trim(~S"""
+             <ul>
+                 <li>Foo</li>
+                 <li>Bar</li>
+                 <li>Car</li>
+             </ul>
+             """)
   end
 
   test ".to_html/1 render multiline checklists" do
@@ -66,15 +65,16 @@ defmodule Tabula.Markdown.RendererTest do
        ], %{}}
     ]
 
-    assert Renderer.to_html(ast) == String.trim(~S"""
-           <ul>
-               <li>
-                   <input checked="" disabled="" type="checkbox">
-                   <strong>Platinum</strong>
-                   : Collect all Trophies.
-               </li>
-           </ul>
-           """)
+    assert Renderer.to_html(ast) ==
+             String.trim(~S"""
+             <ul>
+                 <li>
+                     <input checked="" disabled="" type="checkbox">
+                     <strong>Platinum</strong>
+                     : Collect all Trophies.
+                 </li>
+             </ul>
+             """)
   end
 
   test ".to_html/1 renders multiline content with proper indent" do
@@ -106,7 +106,7 @@ defmodule Tabula.Markdown.RendererTest do
                  <p>
                      All your base are belong to us!
                  </p>
-                 <img src="meme.jpeg" alt="meme">
+                 <img alt="meme" src="meme.jpeg">
              </section>
              <section id="section-2">
                  <p>
@@ -121,24 +121,33 @@ defmodule Tabula.Markdown.RendererTest do
              """)
   end
 
+  test ".to_html/1 processes source for cover images" do
+    ast = [{"p", [], [{"img", [{"src", "movie-poster.jpg"}, {"alt", "poster"}], [], %{}}], %{}}]
+
+    assert Renderer.to_html(ast) =~ "<img alt=\"poster\" src=\"movie-poster.jpg\">"
+
+    assert Renderer.to_html(ast, %{"image_path" => "/dist/images/videogames/"}, true) =~
+             "<img alt=\"poster\" src=\"/dist/images/videogames/movie-poster.jpg\">"
+  end
+
   test ".to_html/1 renders layout if option passed" do
     ast = [{"h1", [], ["All Your Base Are Belong to Us!"], %{}}]
 
     assert Renderer.to_html(ast, %{"title" => "Test"}, true) ==
-           String.trim(~S"""
-           <!doctype html>
-           <html lang="en">
-           <head>
-               <meta charset=utf-8>
-               <link rel="stylesheet" href="../../_assets/card.css">
-               <title>Test</title>
-           </head>
-           <body>
-               <h1>
-                   All Your Base Are Belong to Us!
-               </h1>
-           </body>
-           </html>
-           """)
+             String.trim(~S"""
+             <!doctype html>
+             <html lang="en">
+             <head>
+                 <meta charset=utf-8>
+                 <link rel="stylesheet" href="../../assets/css/card.css">
+                 <title>Test</title>
+             </head>
+             <body>
+                 <h1>
+                     All Your Base Are Belong to Us!
+                 </h1>
+             </body>
+             </html>
+             """)
   end
 end

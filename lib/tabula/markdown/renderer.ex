@@ -6,7 +6,12 @@ defmodule Tabula.Markdown.Renderer do
   def to_html(ast, context \\ %{}, layout \\ false) do
     pad_level = if layout, do: 1, else: 0
     opts = %{level: pad_level, pad: "    ", inline: false}
-    html = ast_to_string(ast, opts) |> String.trim_trailing()
+    assigns = [image_path: Map.get(context, "image_path", "")]
+
+    html =
+      ast_to_string(ast, opts)
+      |> String.trim_trailing()
+      |> EEx.eval_string(assigns: assigns)
 
     if layout do
       into_html_document(html, context)
@@ -25,6 +30,11 @@ defmodule Tabula.Markdown.Renderer do
 
   defp ast_to_string({"comment", _attrs, inner, _meta}, opts),
     do: pad_line("<!--#{inner}-->", opts)
+
+  defp ast_to_string({"img", attrs, _inner, _meta}, opts) do
+    attrs = attrs |> Map.new() |> Map.update!("src", &"<%= @image_path %>#{&1}") |> Map.to_list()
+    pad_line("<img#{attrs_to_string(attrs)}>", opts)
+  end
 
   defp ast_to_string({tag, attrs, _inner, _meta}, opts)
        when tag in @contentless_tags,
@@ -67,7 +77,7 @@ defmodule Tabula.Markdown.Renderer do
   <html lang="en">
   <head>
       <meta charset=utf-8>
-      <link rel="stylesheet" href="../../_assets/card.css">
+      <link rel="stylesheet" href="../../assets/css/card.css">
       <title><%= @title %></title>
   </head>
   <body>
@@ -76,7 +86,12 @@ defmodule Tabula.Markdown.Renderer do
   </html>
   """
 
-  defp into_html_document(content, %{"title" => title}) do
-    EEx.eval_string(@layout, assigns: [inner_content: content, title: title]) |> String.trim()
+  defp into_html_document(content, context) do
+    assigns = [
+      inner_content: content,
+      title: Map.get(context, "title", "Untitled")
+    ]
+
+    EEx.eval_string(@layout, assigns: assigns) |> String.trim()
   end
 end

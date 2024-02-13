@@ -18,13 +18,13 @@ defmodule Tabula.Convert do
     convert_file(input_path, output_path)
   end
 
-  def convert_file(input_path, output_path) do
+  def convert_file(input_path, output_path, opts \\ %{}) do
     case File.read(input_path) do
       {:ok, content} ->
         html_content =
           content
           |> parse_front_matter()
-          |> process_front_matter()
+          |> process_front_matter(opts)
           |> convert()
 
         File.write!(output_path, html_content)
@@ -44,11 +44,12 @@ defmodule Tabula.Convert do
 
   defp parse_front_matter(content), do: {%{}, content}
 
-  defp process_front_matter({context, content}) do
+  defp process_front_matter({context, content}, opts) do
     context =
       context
       |> Map.put("title", get_title_from_header(content))
       |> Map.put("tags", split_tags(context))
+      |> Map.put("image_path", "../../assets/images/#{opts[:board_name]}/")
 
     {context, content}
   end
