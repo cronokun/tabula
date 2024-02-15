@@ -18,57 +18,63 @@ defmodule Tabula.Convert do
     convert_file(input_path, output_path)
   end
 
-  def convert_file(input_path, output_path, opts \\ %{}) do
+  def convert_file(input_path, output_path) do
     case File.read(input_path) do
       {:ok, content} ->
-        html_content =
-          content
-          |> parse_front_matter()
-          |> process_front_matter(opts)
-          |> convert()
+        {markdown, context} = maybe_parse_front_matter(content)
 
-        File.write!(output_path, html_content)
+        html =
+          markdown
+          |> Parser.parse()
+          |> post_process_ast(context)
+          |> Renderer.to_html()
+
+        File.write!(output_path, html)
 
       {:error, _} ->
         :skipped
     end
   end
 
-  # If file starts with "---\n" extract YAML front matter
-  defp parse_front_matter("---\n" <> content) do
-    with [yaml, content] <- String.split(content, "\n---\n"),
-         {:ok, front_matter} <- YamlElixir.read_from_string(yaml) do
-      {front_matter, content}
+  @front_matter_spliter ~r/\n?---\n/
+
+  defp maybe_parse_front_matter(content) do
+    case String.split(content, @front_matter_spliter, trim: true) do
+      [markdown] ->
+        {markdown, %{}}
+
+      [yaml, markdown] ->
+        {:ok, front_matter} = YamlElixir.read_from_string(yaml)
+        {markdown, front_matter}
     end
   end
 
-  defp parse_front_matter(content), do: {%{}, content}
-
-  defp process_front_matter({context, content}, opts) do
+  defp post_process_ast(ast, context) do
     context =
       context
-      |> Map.put("title", get_title_from_header(content))
-      |> Map.put("tags", split_tags(context))
-      |> Map.put("image_path", "../../assets/images/#{opts[:board_name]}/")
+      |> split_tags()
+      |> set_title_from_header(ast)
 
-    {context, content}
+    into_html_layout(ast, context)
   end
 
-  defp get_title_from_header(content) do
-    case Regex.run(~r/^# ([^\n]+)\n/, content, capture: :all_but_first) do
-      [title] -> title
-      nil -> "Untitled"
-    end
+  defp set_title_from_header(context, ast) do
+    title = Enum.find_value(ast, "Untitled", fn {"h1", _, content, _} -> hd(content) end)
+    Map.put(context, "title", title)
   end
 
-  defp split_tags(context) do
-    Map.update(context, "tags", [], fn tags -> String.split(tags || "", ", ") end)
-  end
+  defp split_tags(context), do: Map.update(context, "tags", "", &String.split(&1, ", "))
 
-  defp convert({context, content}) do
-    with ast <- Parser.parse(content),
-         html <- Renderer.to_html(ast, context, true) do
-      html
-    end
+  defp into_html_layout(inner_ast, context) do
+    {"html", [{"lang", "en"}],
+     [
+       {"head", [],
+        [
+          {"meta", [{"charset", "utf-8"}], [], %{}},
+          {"link", [{"rel", "stylesheet"}, {"href", "../../assets/css/card.css"}], [], %{}},
+          {"title", [], [context["title"]], %{}}
+        ], %{}},
+       {"body", [], inner_ast, %{}}
+     ], %{}}
   end
 end

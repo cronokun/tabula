@@ -3,21 +3,10 @@ defmodule Tabula.Markdown.Renderer do
   Render AST to HTML and wrap it in a HTML document.
   """
 
-  def to_html(ast, context \\ %{}, layout \\ false) do
-    pad_level = if layout, do: 1, else: 0
-    opts = %{level: pad_level, pad: "    ", inline: false}
-    assigns = [image_path: Map.get(context, "image_path", "")]
+  @default_padding %{level: 0, pad: "    ", inline: false}
 
-    html =
-      ast_to_string(ast, opts)
-      |> String.trim_trailing()
-      |> EEx.eval_string(assigns: assigns)
-
-    if layout do
-      into_html_document(html, context)
-    else
-      html
-    end
+  def to_html(ast) do
+    ast_to_string(ast, @default_padding) |> String.trim_trailing()
   end
 
   @contentless_tags ~w[area base br col command embed hr img input keygen link meta param source track wbr]
@@ -32,7 +21,6 @@ defmodule Tabula.Markdown.Renderer do
     do: pad_line("<!--#{inner}-->", opts)
 
   defp ast_to_string({"img", attrs, _inner, _meta}, opts) do
-    attrs = attrs |> Map.new() |> Map.update!("src", &"<%= @image_path %>#{&1}") |> Map.to_list()
     pad_line("<img#{attrs_to_string(attrs)}>", opts)
   end
 
@@ -71,27 +59,4 @@ defmodule Tabula.Markdown.Renderer do
 
   defp pad_line(line, %{level: level, pad: padding, inline: false}),
     do: String.duplicate(padding, level) <> line <> "\n"
-
-  @layout ~S"""
-  <!doctype html>
-  <html lang="en">
-  <head>
-      <meta charset=utf-8>
-      <link rel="stylesheet" href="../../assets/css/card.css">
-      <title><%= @title %></title>
-  </head>
-  <body>
-  <%= @inner_content %>
-  </body>
-  </html>
-  """
-
-  defp into_html_document(content, context) do
-    assigns = [
-      inner_content: content,
-      title: Map.get(context, "title", "Untitled")
-    ]
-
-    EEx.eval_string(@layout, assigns: assigns) |> String.trim()
-  end
 end

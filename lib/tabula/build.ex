@@ -33,8 +33,7 @@ defmodule Tabula.Build do
 
       card_path = card_source_path(board, card)
       output_path = card_dest_path(board, card)
-      opts = %{board_name: board.name}
-      result = Convert.convert_file(card_path, output_path, opts)
+      result = Convert.convert_file(card_path, output_path)
 
       if result == :skipped do
         IO.puts("#{IO.ANSI.yellow()}WARNING: Can't read file, skipping#{IO.ANSI.reset()}")

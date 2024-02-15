@@ -23,9 +23,9 @@ defmodule Tabula.Markdown.Parser do
   defp parse_block({"ul", attrs, content, meta}) do
     {lis, res} =
       Enum.reduce(content, {[], nil}, fn li, {acc, res} ->
-        {li, r} =_parse_li(li)
+        {li, r} = _parse_li(li)
         {[li | acc], res || r}
-        end)
+      end)
 
     attrs = if res == :checklist, do: [{"class", "checklist"} | attrs], else: attrs
 

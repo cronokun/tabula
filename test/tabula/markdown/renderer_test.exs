@@ -106,7 +106,7 @@ defmodule Tabula.Markdown.RendererTest do
                  <p>
                      All your base are belong to us!
                  </p>
-                 <img alt="meme" src="meme.jpeg">
+                 <img src="meme.jpeg" alt="meme">
              </section>
              <section id="section-2">
                  <p>
@@ -118,36 +118,6 @@ defmodule Tabula.Markdown.RendererTest do
                      <li>car</li>
                  </ul>
              </section>
-             """)
-  end
-
-  test ".to_html/1 processes source for cover images" do
-    ast = [{"p", [], [{"img", [{"src", "movie-poster.jpg"}, {"alt", "poster"}], [], %{}}], %{}}]
-
-    assert Renderer.to_html(ast) =~ "<img alt=\"poster\" src=\"movie-poster.jpg\">"
-
-    assert Renderer.to_html(ast, %{"image_path" => "/dist/images/videogames/"}, true) =~
-             "<img alt=\"poster\" src=\"/dist/images/videogames/movie-poster.jpg\">"
-  end
-
-  test ".to_html/1 renders layout if option passed" do
-    ast = [{"h1", [], ["All Your Base Are Belong to Us!"], %{}}]
-
-    assert Renderer.to_html(ast, %{"title" => "Test"}, true) ==
-             String.trim(~S"""
-             <!doctype html>
-             <html lang="en">
-             <head>
-                 <meta charset=utf-8>
-                 <link rel="stylesheet" href="../../assets/css/card.css">
-                 <title>Test</title>
-             </head>
-             <body>
-                 <h1>
-                     All Your Base Are Belong to Us!
-                 </h1>
-             </body>
-             </html>
              """)
   end
 end
