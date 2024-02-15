@@ -6,11 +6,13 @@ defmodule Tabula.Build do
   alias Tabula.Board
   alias Tabula.Convert
   alias Tabula.IndexPageRenderer
+  alias Tabula.Storage
 
   def run(board_dir) do
     with {:ok, yml} <- File.read(Path.join(board_dir, "_items.yml")),
          {:ok, data} <- YamlElixir.read_from_string(yml),
          board <- Board.build(data, board_dir) do
+      Storage.init(board.name)
       manage_dirs(board)
       create_pages(board)
       create_index_page(board)
