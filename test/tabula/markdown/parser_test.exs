@@ -28,10 +28,10 @@ defmodule Tabula.Markdown.ParserTest do
     assert [
              {"ul", [{"class", "checklist"}],
               [
-                {"li", [], [@checked_checkbox, " foo"], %{}},
-                {"li", [], [@unchecked_checkbox, " bar"], %{}},
-                {"li", [], [@checked_checkbox, " car"], %{}}
-              ], %{}}
+                {"li", [], [@checked_checkbox, " foo"]},
+                {"li", [], [@unchecked_checkbox, " bar"]},
+                {"li", [], [@checked_checkbox, " car"]}
+              ]}
            ] = ast
   end
 
@@ -48,14 +48,14 @@ defmodule Tabula.Markdown.ParserTest do
                 {"li", [],
                  [
                    @checked_checkbox,
-                   [{"strong", [], ["Hello:"], %{}}, " World!"]
-                 ], %{}},
+                   [{"strong", [], ["Hello:"]}, " World!"]
+                 ]},
                 {"li", [],
                  [
                    @unchecked_checkbox,
-                   [{"strong", [], ["Foobar:"], %{}}, " Lorem ipsum."]
-                 ], %{}}
-              ], %{}}
+                   [{"strong", [], ["Foobar:"]}, " Lorem ipsum."]
+                 ]}
+              ]}
            ] = ast
   end
 
@@ -72,17 +72,17 @@ defmodule Tabula.Markdown.ParserTest do
     assert [
              {"dl", [],
               [
-                {"dt", [], ["Genre"], %{}},
-                {"dd", [], ["Adventure, Role Playing, Strategy"], %{}},
-                {"dt", [], ["Developer"], %{}},
-                {"dd", [], ["Larian Studios"], %{}},
-                {"dt", [], ["Publisher"], %{}},
-                {"dd", [], ["Larian Studios"], %{}},
-                {"dt", [], ["Release Date"], %{}},
-                {"dd", [], ["3 Aug, 2023"], %{}},
-                {"dt", [], ["Platform"], %{}},
-                {"dd", [], ["Steam, macOS"], %{}}
-              ], %{}}
+                {"dt", [], ["Genre"]},
+                {"dd", [], ["Adventure, Role Playing, Strategy"]},
+                {"dt", [], ["Developer"]},
+                {"dd", [], ["Larian Studios"]},
+                {"dt", [], ["Publisher"]},
+                {"dd", [], ["Larian Studios"]},
+                {"dt", [], ["Release Date"]},
+                {"dd", [], ["3 Aug, 2023"]},
+                {"dt", [], ["Platform"]},
+                {"dd", [], ["Steam, macOS"]}
+              ]}
            ] = ast
   end
 
@@ -96,12 +96,11 @@ defmodule Tabula.Markdown.ParserTest do
     assert [
              {"dl", [],
               [
-                {"dt", [], ["Foobar"], %{}},
-                {"dd", [], ["This is ", {"strong", [], ["bold!"], %{}}, " move"], %{}},
-                {"dt", [], ["Link"], %{}},
-                {"dd", [],
-                 [{"a", [{"href", "https://example.com/"}], ["https://example.com/"], %{}}], %{}}
-              ], %{}}
+                {"dt", [], ["Foobar"]},
+                {"dd", [], ["This is ", {"strong", [], ["bold!"]}, " move"]},
+                {"dt", [], ["Link"]},
+                {"dd", [], [{"a", [{"href", "https://example.com/"}], ["https://example.com/"]}]}
+              ]}
            ] = ast
   end
 
@@ -136,18 +135,18 @@ defmodule Tabula.Markdown.ParserTest do
               [
                 {"li", [],
                  [
-                   {"p", [], [" List item one."], %{}},
+                   {"p", [], [" List item one."]},
                    {"p", [],
                     [
                       "List item one continued with a second paragraph followed by an\nIndented block."
-                    ], %{}},
-                   {"pre", [], [{"code", [], ["$ ls *.sh\n$ mv *.sh ~/tmp"], %{}}], %{}},
-                   {"p", [], ["List item continued with a third paragraph."], %{}}
-                 ], %{}},
+                    ]},
+                   {"pre", [], [{"code", [], ["$ ls *.sh\n$ mv *.sh ~/tmp"]}]},
+                   {"p", [], ["List item continued with a third paragraph."]}
+                 ]},
                 {"li", [],
                  [
-                   {"p", [], [" List item two continued with an open block."], %{}},
-                   {"p", [], ["This paragraph is part of the preceding list item."], %{}},
+                   {"p", [], [" List item two continued with an open block."]},
+                   {"p", [], ["This paragraph is part of the preceding list item."]},
                    {"ol", [],
                     [
                       {"li", [],
@@ -155,14 +154,14 @@ defmodule Tabula.Markdown.ParserTest do
                          {"p", [],
                           [
                             "This list is nested and does not require explicit item continuation."
-                          ], %{}},
-                         {"p", [], ["This paragraph is part of the preceding list item."], %{}}
-                       ], %{}},
-                      {"li", [], [{"p", [], ["List item b."], %{}}], %{}}
-                    ], %{}},
-                   {"p", [], ["This paragraph belongs to item two of the outer list."], %{}}
-                 ], %{}}
-              ], %{}}
+                          ]},
+                         {"p", [], ["This paragraph is part of the preceding list item."]}
+                       ]},
+                      {"li", [], [{"p", [], ["List item b."]}]}
+                    ]},
+                   {"p", [], ["This paragraph belongs to item two of the outer list."]}
+                 ]}
+              ]}
            ] = ast
   end
 end

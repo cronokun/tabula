@@ -17,32 +17,32 @@ defmodule Tabula.Markdown.Renderer do
 
   defp ast_to_string(binary, opts) when is_binary(binary), do: pad_line(binary, opts)
 
-  defp ast_to_string({"comment", _attrs, inner, _meta}, opts),
+  defp ast_to_string({"comment", _attrs, inner}, opts),
     do: pad_line("<!--#{inner}-->", opts)
 
-  defp ast_to_string({"img", attrs, _inner, _meta}, opts) do
+  defp ast_to_string({"img", attrs, _inner}, opts) do
     pad_line("<img#{attrs_to_string(attrs)}>", opts)
   end
 
-  defp ast_to_string({tag, attrs, _inner, _meta}, opts)
+  defp ast_to_string({tag, attrs, _inner}, opts)
        when tag in @contentless_tags,
        do: pad_line("<#{tag}#{attrs_to_string(attrs)}>", opts)
 
-  defp ast_to_string({"li", _attrs, [content | _rest], _meta} = ast, %{inline: false} = opts)
+  defp ast_to_string({"li", _attrs, [content | _rest]} = ast, %{inline: false} = opts)
        when is_binary(content),
        do: ast_to_string(ast, %{opts | inline: true})
 
-  defp ast_to_string({tag, _attrs, _inner, _meta} = ast, %{inline: false} = opts)
+  defp ast_to_string({tag, _attrs, _inner} = ast, %{inline: false} = opts)
        when tag in @inline_tags,
        do: ast_to_string(ast, %{opts | inline: true})
 
-  defp ast_to_string({tag, attrs, inner, _meta}, %{inline: true} = opts) do
+  defp ast_to_string({tag, attrs, inner}, %{inline: true} = opts) do
     pad_line("<#{tag}#{attrs_to_string(attrs)}>", opts) <>
       ast_to_string(inner, Map.put(opts, :level, 0)) <>
       "</#{tag}>" <> "\n"
   end
 
-  defp ast_to_string({tag, attrs, inner, _meta}, opts) do
+  defp ast_to_string({tag, attrs, inner}, opts) do
     next_opts = Map.update!(opts, :level, &(&1 + 1))
 
     pad_line("<#{tag}#{attrs_to_string(attrs)}>", opts) <>

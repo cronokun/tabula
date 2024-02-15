@@ -24,7 +24,9 @@ defmodule Tabula.IndexPageRenderer do
 
   def to_html(board) do
     content = lists_to_html(board.lists)
-    EEx.eval_string(@layout, assigns: [board_title: board.name, inner_content: content]) |> String.trim_trailing()
+
+    EEx.eval_string(@layout, assigns: [board_title: board.name, inner_content: content])
+    |> String.trim_trailing()
   end
 
   defp lists_to_html(lists) do
@@ -35,12 +37,12 @@ defmodule Tabula.IndexPageRenderer do
 
   defp list_ast(list) do
     [
-      {"h2", [], [list.name], %{}},
-      {"ul", [], Enum.map(list.cards, &card_ast/1), %{}}
+      {"h2", [], [list.name]},
+      {"ul", [], Enum.map(list.cards, &card_ast/1)}
     ]
   end
 
   defp card_ast(card) do
-    {"li", [], [ {"a", [{"href", "#{card.path}.html"}, {"title", card.title}], [card.title], %{}}], %{}}
+    {"li", [], [{"a", [{"href", "#{card.path}.html"}, {"title", card.title}], [card.title]}]}
   end
 end

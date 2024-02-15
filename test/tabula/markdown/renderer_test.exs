@@ -4,12 +4,12 @@ defmodule Tabula.Markdown.RendererTest do
   alias Tabula.Markdown.Renderer
 
   test ".to_html/1 renders inline tags" do
-    ast = [{"strong", [], ["foobar"], %{}}]
+    ast = [{"strong", [], ["foobar"]}]
     assert Renderer.to_html(ast) == "<strong>foobar</strong>"
   end
 
   test ".to_html/1 renders tag attributes" do
-    ast = [{"p", [{"class", "foobar"}], ["All your base are belong to us!"], %{}}]
+    ast = [{"p", [{"class", "foobar"}], ["All your base are belong to us!"]}]
 
     assert Renderer.to_html(ast) ==
              String.trim(~S"""
@@ -19,8 +19,7 @@ defmodule Tabula.Markdown.RendererTest do
              """)
 
     ast = [
-      {"a", [{"href", "https://localhost/foobar"}, {"class", "main-link"}], ["Foobar (local)"],
-       %{}}
+      {"a", [{"href", "https://localhost/foobar"}, {"class", "main-link"}], ["Foobar (local)"]}
     ]
 
     assert Renderer.to_html(ast) ==
@@ -28,7 +27,7 @@ defmodule Tabula.Markdown.RendererTest do
   end
 
   test ".to_html/1 renders tags without content" do
-    ast = [{"hr", [], [], %{}}]
+    ast = [{"hr", [], []}]
     assert Renderer.to_html(ast) == "<hr>"
   end
 
@@ -36,10 +35,10 @@ defmodule Tabula.Markdown.RendererTest do
     ast = [
       {"ul", [],
        [
-         {"li", [], ["Foo"], %{}},
-         {"li", [], ["Bar"], %{}},
-         {"li", [], ["Car"], %{}}
-       ], %{}}
+         {"li", [], ["Foo"]},
+         {"li", [], ["Bar"]},
+         {"li", [], ["Car"]}
+       ]}
     ]
 
     assert Renderer.to_html(ast) ==
@@ -58,11 +57,11 @@ defmodule Tabula.Markdown.RendererTest do
        [
          {"li", [],
           [
-            {"input", [{"checked", ""}, {"disabled", ""}, {"type", "checkbox"}], [], %{}},
-            {"strong", [], ["Platinum"], %{}},
+            {"input", [{"checked", ""}, {"disabled", ""}, {"type", "checkbox"}], []},
+            {"strong", [], ["Platinum"]},
             ": Collect all Trophies."
-          ], %{}}
-       ], %{}}
+          ]}
+       ]}
     ]
 
     assert Renderer.to_html(ast) ==
@@ -81,20 +80,20 @@ defmodule Tabula.Markdown.RendererTest do
     ast = [
       {"section", [{"id", "section-1"}],
        [
-         {"h1", [], ["Section 1"], %{}},
-         {"p", [], ["All your base are belong to us!"], %{}},
-         {"img", [{"src", "meme.jpeg"}, {"alt", "meme"}], [], %{}}
-       ], %{}},
+         {"h1", [], ["Section 1"]},
+         {"p", [], ["All your base are belong to us!"]},
+         {"img", [{"src", "meme.jpeg"}, {"alt", "meme"}], []}
+       ]},
       {"section", [{"id", "section-2"}],
        [
-         {"p", [], ["Lorem ipsum etc."], %{}},
+         {"p", [], ["Lorem ipsum etc."]},
          {"ul", [],
           [
-            {"li", [], ["foo"], %{}},
-            {"li", [], ["bar"], %{}},
-            {"li", [], ["car"], %{}}
-          ], %{}}
-       ], %{}}
+            {"li", [], ["foo"]},
+            {"li", [], ["bar"]},
+            {"li", [], ["car"]}
+          ]}
+       ]}
     ]
 
     assert Renderer.to_html(ast) ==

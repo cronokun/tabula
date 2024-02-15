@@ -70,11 +70,11 @@ defmodule Tabula.Convert do
      [
        {"head", [],
         [
-          {"meta", [{"charset", "utf-8"}], [], %{}},
-          {"link", [{"rel", "stylesheet"}, {"href", "../../assets/css/card.css"}], [], %{}},
-          {"title", [], [context["title"]], %{}}
-        ], %{}},
-       {"body", [], inner_ast, %{}}
-     ], %{}}
+          {"meta", [{"charset", "utf-8"}], []},
+          {"link", [{"rel", "stylesheet"}, {"href", "../../assets/css/card.css"}], []},
+          {"title", [], [context["title"]]}
+        ]},
+       {"body", [], inner_ast}
+     ]}
   end
 end
