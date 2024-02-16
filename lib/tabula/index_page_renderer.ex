@@ -4,45 +4,59 @@ defmodule Tabula.IndexPageRenderer do
   """
 
   alias Tabula.Markdown.Renderer
-
-  @layout ~S"""
-  <!doctype html>
-  <html lang="en">
-  <head>
-      <meta charset=utf-8>
-      <link rel="stylesheet" href="../assets/css/board.css">
-      <title><%= @board_title %></title>
-  </head>
-  <body>
-  <h1>
-       <%= @board_title %>
-  </h1>
-  <%= @inner_content %>
-  </body>
-  </html>
-  """
+  alias Tabula.Storage
 
   def to_html(board) do
-    content = lists_to_html(board.lists)
-
-    EEx.eval_string(@layout, assigns: [board_title: board.name, inner_content: content])
+    Renderer.to_html([
+      {"doctype", [], []},
+      {
+        "html",
+        [{"lang", "en"}],
+        [
+          {"head", [],
+           [
+             {"meta", [{"charset", "utf-8"}], []},
+             {"link", [{"rel", "stylesheet"}, {"href", "../assets/css/board.css"}], []},
+             {"title", [], [board.name]}
+           ]},
+          {"body", [],
+           [
+             {"h1", [], [board.name]},
+             lists_to_html(board.lists)
+           ]}
+        ]
+      }
+    ])
     |> String.trim_trailing()
   end
 
-  defp lists_to_html(lists) do
-    lists
-    |> Enum.map(&list_ast/1)
-    |> Renderer.to_html()
-  end
+  defp lists_to_html(lists), do: Enum.map(lists, &list_ast/1)
 
   defp list_ast(list) do
-    [
-      {"h2", [], [list.name]},
-      {"ul", [], Enum.map(list.cards, &card_ast/1)}
-    ]
+    {"section", [],
+     [
+       {"h2", [], [list.name]},
+       {"ul", [], Enum.map(list.cards, &card_ast/1)}
+     ]}
   end
 
   defp card_ast(card) do
-    {"li", [], [{"a", [{"href", "#{card.path}.html"}, {"title", card.title}], [card.title]}]}
+    data = Storage.get_card(card.name)
+
+    {"li", [{"class", "card"}],
+     [
+       {"a", [{"href", card.target_path}, {"title", data["title"]}],
+        [card_cover(data), data["title"] || card.name]}
+     ]}
+  end
+
+  defp card_cover(card) do
+    src =
+      case card["image_path"] do
+        nil -> "../assets/images/no-cover.jpeg"
+        path -> "..#{path}"
+      end
+
+    {"img", [{"src", src}, {"alt", card["title"]}, {"class", "cover"}], []}
   end
 end
