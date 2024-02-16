@@ -7,18 +7,6 @@ defmodule Tabula.Convert do
   alias Tabula.Markdown.Renderer
   alias Tabula.Storage
 
-  def run(paths) when is_list(paths) do
-    for filepath <- paths do
-      IO.puts("converting card: #{filepath}")
-      convert_file(filepath)
-    end
-  end
-
-  def convert_file(input_path) do
-    output_path = String.replace(input_path, ~r/\.(md|markdown)$/, ".html")
-    convert_file(input_path, output_path)
-  end
-
   def convert_file(input_path, output_path) do
     case File.read(input_path) do
       {:ok, content} ->
