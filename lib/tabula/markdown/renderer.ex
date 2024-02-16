@@ -17,6 +17,8 @@ defmodule Tabula.Markdown.Renderer do
 
   defp ast_to_string(binary, opts) when is_binary(binary), do: pad_line(binary, opts)
 
+  defp ast_to_string({"doctype", [], []}, opts), do: pad_line("<!doctype html>", opts)
+
   defp ast_to_string({"comment", _attrs, inner}, opts),
     do: pad_line("<!--#{inner}-->", opts)
 

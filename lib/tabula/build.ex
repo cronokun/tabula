@@ -19,23 +19,17 @@ defmodule Tabula.Build do
     end
   end
 
-  @release_dir Path.expand("release")
-
   defp create_index_page(board) do
+    IO.puts("creating index page")
     html = IndexPageRenderer.to_html(board)
-    path = Path.join([@release_dir, board.name, "index.html"])
-    IO.puts("building index page")
-    File.write!(path, html)
+    File.write!(board.index_path, html)
     :ok
   end
 
   defp create_pages(board) do
     for list <- board.lists, card <- list.cards do
-      IO.puts("building \"#{card.path}\"")
-
-      card_path = card_source_path(board, card)
-      output_path = card_dest_path(board, card)
-      result = Convert.convert_file(card_path, output_path)
+      IO.puts("creating \"#{card.name}\" card")
+      result = Convert.convert_file(card)
 
       if result == :skipped do
         IO.puts("#{IO.ANSI.yellow()}WARNING: Can't read file, skipping#{IO.ANSI.reset()}")
@@ -44,6 +38,9 @@ defmodule Tabula.Build do
 
     :ok
   end
+
+  # FIXME: this is duplicated; move to config!
+  @release_dir Path.expand("release")
 
   defp manage_dirs(board) do
     IO.puts("copying assets")
@@ -57,17 +54,5 @@ defmodule Tabula.Build do
     File.cp_r!("assets/css/", dest_css_dir)
     for list <- board.lists, do: File.mkdir_p!(Path.join([destination, list.path]))
     :ok
-  end
-
-  def card_source_path(board, card) do
-    [board.dir, card.path <> ".md"]
-    |> Path.join()
-    |> Path.expand()
-  end
-
-  def card_dest_path(board, card) do
-    [@release_dir, board.name, card.path <> ".html"]
-    |> Path.join()
-    |> Path.expand()
   end
 end
