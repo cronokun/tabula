@@ -47,15 +47,13 @@ defmodule Tabula.Markdown.Parser do
   @checked_checkbox {
     "input",
     [{"checked", ""}, {"disabled", ""}, {"type", "checkbox"}],
-    [],
-    %{verbatium: true}
+    []
   }
 
   @unchecked_checkbox {
     "input",
     [{"disabled", ""}, {"type", "checkbox"}],
-    [],
-    %{verbatium: true}
+    []
   }
 
   defp _parse_li({"li", attrs, ["[ ] " <> content]}) when is_binary(content) do

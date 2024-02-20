@@ -6,15 +6,13 @@ defmodule Tabula.Markdown.ParserTest do
   @checked_checkbox {
     "input",
     [{"checked", ""}, {"disabled", ""}, {"type", "checkbox"}],
-    [],
-    %{verbatium: true}
+    []
   }
 
   @unchecked_checkbox {
     "input",
     [{"disabled", ""}, {"type", "checkbox"}],
-    [],
-    %{verbatium: true}
+    []
   }
 
   test ".parse/1 pasres simple task list items" do
