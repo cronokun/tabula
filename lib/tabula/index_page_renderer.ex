@@ -19,7 +19,7 @@ defmodule Tabula.IndexPageRenderer do
              {"link", [{"rel", "stylesheet"}, {"href", "../assets/css/board.css"}], []},
              {"title", [], [board.name]}
            ]},
-          {"body", [],
+          {"body", [{"class", css_board_name(board)}],
            [
              {"h1", [], [board.name]},
              lists_to_html(board.lists)
@@ -51,12 +51,22 @@ defmodule Tabula.IndexPageRenderer do
   end
 
   defp card_cover(card) do
-    src =
+    {src, class} =
       case card["image_path"] do
-        nil -> "../assets/images/no-cover.jpeg"
-        path -> "..#{path}"
+        nil -> {"../assets/images/no-cover.png", "no-cover"}
+        path -> {"..#{path}", "cover"}
       end
 
-    {"img", [{"src", src}, {"alt", card["title"]}, {"class", "cover"}], []}
+    {"img", [{"src", src}, {"alt", card["title"]}, {"class", class}], []}
+  end
+
+  defp css_board_name(board) do
+    # FIXME: replace with string tokenization
+    case board.name do
+      "Movies" -> "movies"
+      "TV Series" -> "tv-series"
+      "Videogames" -> "videogames"
+      other -> other
+    end
   end
 end

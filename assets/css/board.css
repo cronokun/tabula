@@ -28,6 +28,7 @@ li.card {
   display: inline-block;
   margin-right: 10px;
   margin-bottom: 15px;
+  width: 250px;
 }
 
 li a {
@@ -37,7 +38,24 @@ li a {
 }
 
 li img.cover {
-  height: 250px;
   display: block;
   margin-bottom: 5px;
+  width: 100%;
+}
+
+li img.no-cover {
+  display: block;
+  margin-bottom: 5px;
+  object-fit: scale-down;
+  background-color: #DDD;
+  width: 250px;
+}
+
+body.movies li.card img.no-cover,
+body.tv-series li.card img.no-cover {
+  height: 375px;
+}
+
+body.videogames li.card img.no-cover {
+  height: 250px;
 }

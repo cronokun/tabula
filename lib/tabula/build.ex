@@ -47,11 +47,11 @@ defmodule Tabula.Build do
     destination = Path.join([@release_dir, board.name])
     dest_img_dir = Path.join([@release_dir, "assets/images/", board.name])
     source_img_dir = Path.join([board.dir, "_images/"])
-    dest_css_dir = Path.join([@release_dir, "assets/css/"])
+    dest_assets_dir = Path.join([@release_dir, "assets/"])
     File.rm_rf!(destination)
     File.mkdir_p!(dest_img_dir)
     File.cp_r!(source_img_dir, dest_img_dir)
-    File.cp_r!("assets/css/", dest_css_dir)
+    File.cp_r!("assets/", dest_assets_dir)
     for list <- board.lists, do: File.mkdir_p!(Path.join([destination, list.path]))
     :ok
   end

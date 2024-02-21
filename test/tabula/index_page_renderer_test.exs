@@ -23,7 +23,7 @@ defmodule Tabula.IndexPageRendererTest do
                          Videogames
                      </title>
                  </head>
-                 <body>
+                 <body class="videogames">
                      <h1>
                          Videogames
                      </h1>
@@ -46,7 +46,7 @@ defmodule Tabula.IndexPageRendererTest do
                                  <a href="/Users/crono/Developer/tabula/release/Videogames/Backlog/The Last of Us Part I.html" title="The Last of Us Part I"><img src="..last-of-us-part1.jpg" alt="The Last of Us Part I" class="cover">The Last of Us Part I</a>
                              </li>
                              <li class="card">
-                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Backlog/The Last of Us Part II Remastered.html" title=""><img src="../assets/images/no-cover.jpeg" alt="" class="cover">The Last of Us Part II Remastered</a>
+                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Backlog/The Last of Us Part II Remastered.html" title="The Last of Us Part II Remastered"><img src="..last-of-us-part2-remastered.jpg" alt="The Last of Us Part II Remastered" class="cover">The Last of Us Part II Remastered</a>
                              </li>
                          </ul>
                      </section>
@@ -66,10 +66,10 @@ defmodule Tabula.IndexPageRendererTest do
                          </h2>
                          <ul>
                              <li class="card">
-                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Finished/Oxenfree II Lost Signals.html" title=""><img src="../assets/images/no-cover.jpeg" alt="" class="cover">Oxenfree II: Lost Signals</a>
+                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Finished/Oxenfree II Lost Signals.html" title=""><img src="../assets/images/no-cover.png" alt="" class="no-cover">Oxenfree II: Lost Signals</a>
                              </li>
                              <li class="card">
-                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Finished/Hogwarts Legacy.html" title=""><img src="../assets/images/no-cover.jpeg" alt="" class="cover">Hogwarts Legacy</a>
+                                 <a href="/Users/crono/Developer/tabula/release/Videogames/Finished/Hogwarts Legacy.html" title=""><img src="../assets/images/no-cover.png" alt="" class="no-cover">Hogwarts Legacy</a>
                              </li>
                              <li class="card">
                                  <a href="/Users/crono/Developer/tabula/release/Videogames/Finished/Dead Space.html" title="Dead Space"><img src="..dead-space.jpg" alt="Dead Space" class="cover">Dead Space</a>
@@ -139,9 +139,9 @@ defmodule Tabula.IndexPageRendererTest do
       "image_path" => "last-of-us-part1.jpg"
     })
 
-    Storage.add_card("The Last of Us Part II Remasterd", %{
-      "title" => "The Last of Us Part II Remasterd",
-      "image_path" => "last-of-us-part2-remasterd.jpg"
+    Storage.add_card("The Last of Us Part II Remastered", %{
+      "title" => "The Last of Us Part II Remastered",
+      "image_path" => "last-of-us-part2-remastered.jpg"
     })
 
     Storage.add_card("Pathfinder Kingmaker", %{
@@ -149,11 +149,7 @@ defmodule Tabula.IndexPageRendererTest do
       "image_path" => "pathfinder-kingmaker.jpg"
     })
 
-    Storage.add_card("Oxenfree II Lost Signals", %{
-      "title" => "Oxenfree II Lost Signals",
-      "image_path" => "oxenfree.jpg"
-    })
-
+    Storage.add_card("Oxenfree II Lost Signals", %{ "title" => "Oxenfree II Lost Signals" })
     Storage.add_card("Dead Space", %{"title" => "Dead Space", "image_path" => "dead-space.jpg"})
 
     Storage.add_card("The Callisto Protocol", %{
