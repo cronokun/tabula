@@ -5,18 +5,20 @@ html {
 }
 
 body {
-  padding: 16px;
   margin-left: 25px;
   margin-right: 25px;
 }
 
 h1 {
-  font-weight: 100;
 }
 
 h2 {
   font-weight: 200;
   font-size: 1.4em;
+}
+
+h1 + p {
+  margin: 0;
 }
 
 h1 + p > img {
@@ -50,4 +52,22 @@ ul {
 ul.checklist {
   list-style-type: none;
   padding-left: 0;
+}
+
+.tags {
+  font-family: Helvetica Neue;
+  font-size: 11px;
+  font-weight: 500;
+  margin: 7px 0 5px 0;
+}
+
+.tags span {
+  display: inline-block;
+  background-color: #e2e2e2;
+  border-radius: 5px;
+  color: #333333;
+  margin-right: 2px;
+  line-height: 12px;
+  letter-spacing: 0.25px;
+  padding: 4px 5px;
 }

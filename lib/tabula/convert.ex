@@ -49,6 +49,7 @@ defmodule Tabula.Convert do
     Storage.add_card(card.name, context)
 
     ast
+    |> insert_tags(context)
     |> into_html_layout(context)
     |> process_images_src(context["image_path"])
   end
@@ -67,7 +68,17 @@ defmodule Tabula.Convert do
     Map.put(context, "image_path", "/assets/images/#{Storage.board_name()}/#{src}")
   end
 
-  defp split_tags(context), do: Map.update(context, "tags", "", &String.split(&1, ", "))
+  defp split_tags(context), do: Map.update(context, "tags", [], &String.split(&1, ", "))
+
+  defp insert_tags(ast, context) do
+    tags_list = for(tag <- context["tags"], do: {"span", [], [tag]})
+    tags_ast = {"p", [{"class", "tags"}], tags_list ++ due_date_tag(context)}
+
+    Floki.traverse_and_update(ast, fn
+      {"img", attrs, []} -> [{"img", attrs, []}, tags_ast]
+      other -> other
+    end)
+  end
 
   defp into_html_layout(inner_ast, context) do
     [
@@ -91,4 +102,20 @@ defmodule Tabula.Convert do
       {"img", attrs}
     end)
   end
+
+  defp due_date_tag(%{"due_date" => due_date}) do
+    date = Date.from_iso8601!(due_date)
+    is_same_year = Date.utc_today().year == date.year
+
+    text =
+      if is_same_year do
+        Calendar.strftime(date, "%b %d")
+      else
+        Calendar.strftime(date, "%b %d, %y")
+      end
+
+    [{"span", [], [text]}]
+  end
+
+  defp due_date_tag(_context), do: []
 end
