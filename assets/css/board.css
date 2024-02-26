@@ -1,13 +1,10 @@
 html {
   font-family: "Verdana", "Geneva", sans-serif;
   font-size: 11pt;
-  line-height: 1.5;
 }
 
 body {
-  padding: 16px;
   margin-left: 25px;
-  margin-right: 25px;
 }
 
 h1 {
@@ -15,7 +12,7 @@ h1 {
 }
 
 h2 {
-  font-weight: 200;
+  font-weight: 400;
 }
 
 section > h2 + ul {
@@ -28,12 +25,20 @@ section > h2 + ul {
 
 li.card {
   margin-right: 15px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   width: 250px;
 }
 
+body.movies li.card,
+body.tv-series li.card {
+  width: 250px;
+}
+
+body.videogames li.card {
+  width: 300px;
+}
+
 li a {
-  font-size: 10pt;
   text-decoration: none;
   color: black;
 }
@@ -46,11 +51,12 @@ li img.cover {
 body.movies li.card img.cover,
 body.tv-series li.card img.cover {
   height: 375px;
+  width: 250px;
   object-fit: cover;
 }
 
 body.videogames li.card img.cover {
-  /* height: 250px; */
+  height: 300px;
 }
 
 li img.no-cover {
@@ -64,8 +70,9 @@ li img.no-cover {
 body.movies li.card img.no-cover,
 body.tv-series li.card img.no-cover {
   height: 375px;
+  width: 250px;
 }
 
 body.videogames li.card img.no-cover {
-  height: 250px;
+  height: 300px;
 }
