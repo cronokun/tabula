@@ -46,7 +46,11 @@ defmodule Tabula.IndexPageRenderer do
     {"li", [{"class", "card"}],
      [
        {"a", [{"href", card.target_path}, {"title", data["title"]}],
-        [card_cover(data), data["title"] || card.name]}
+        [
+          card_cover(data),
+          data["title"] || card.name
+        ]},
+       tags_block(data)
      ]}
   end
 
@@ -69,4 +73,28 @@ defmodule Tabula.IndexPageRenderer do
       other -> other
     end
   end
+
+  defp tags_block(data) do
+    tags = List.wrap(data["tags"]) ++ List.wrap(due_date_tag(data))
+
+    if Enum.empty?(tags) do
+      []
+    else
+      tags_ast = for tag <- tags, do: {"span", [], tag}
+      {"p", [{"class", "tags"}], tags_ast}
+    end
+  end
+
+  defp due_date_tag(%{"due_date" => due_date}) do
+    date = Date.from_iso8601!(due_date)
+    is_same_year = Date.utc_today().year == date.year
+
+    if is_same_year do
+      Calendar.strftime(date, "%b %d")
+    else
+      Calendar.strftime(date, "%b %d, %y")
+    end
+  end
+
+  defp due_date_tag(_context), do: nil
 end
