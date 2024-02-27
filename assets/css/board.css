@@ -12,7 +12,20 @@ h1 {
 }
 
 h2 {
+  padding-top: 20px;
   font-weight: 400;
+}
+
+h2 span.count {
+  font-family: Helvetica Neue;
+  font-size: 11px;
+  display: inline-block;
+  border: 1px solid #777777;
+  border-radius: 5px;
+  color: #555555;
+  letter-spacing: 0.25px;
+  padding: 4px 5px;
+  vertical-align: middle;
 }
 
 section > h2 + ul {

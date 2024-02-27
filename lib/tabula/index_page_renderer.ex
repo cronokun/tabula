@@ -35,7 +35,11 @@ defmodule Tabula.IndexPageRenderer do
   defp list_ast(list) do
     {"section", [],
      [
-       {"h2", [], [list.name]},
+       {"h2", [{"id", list.path}],
+        [
+          list.name,
+          list_cards_counter(list)
+        ]},
        {"ul", [], Enum.map(list.cards, &card_ast/1)}
      ]}
   end
@@ -97,4 +101,12 @@ defmodule Tabula.IndexPageRenderer do
   end
 
   defp due_date_tag(_context), do: nil
+
+  defp list_cards_counter(%{cards: cards}) do
+    case length(cards) do
+      0 -> []
+      1 -> {"span", [{"class", "count"}], ["1 card"]}
+      n -> {"span", [{"class", "count"}], ["#{n} cards"]}
+    end
+  end
 end

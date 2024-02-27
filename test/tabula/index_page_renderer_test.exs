@@ -25,6 +25,17 @@ defmodule Tabula.IndexPageRendererTest do
     assert section_headers == ["Wantlist", "Backlog", "Playing", "Finished", "Replay", "Dropped"]
   end
 
+  test ".to_html/1 renders list header ancors", %{ast: ast} do
+    section_ids =
+      ast
+      |> Floki.find("section h2")
+      |> Enum.map(fn {"h2", attrs, _content} ->
+        attrs |> List.keyfind("id", 0) |> elem(1)
+      end)
+
+    assert section_ids == ["wantlist", "backlog", "playing", "finished", "replay", "dropped"]
+  end
+
   test ".to_html/1 renders all list items", %{ast: ast} do
     assert get_list_items(ast, "Wantlist") == ["Alan Wake 2"]
 
@@ -50,13 +61,35 @@ defmodule Tabula.IndexPageRendererTest do
     assert get_card_tags(ast, "Alan Wake 2") == ["PS5", "18+"]
   end
 
+  test ".to_html/1 renders list items count", %{ast: ast} do
+    counts =
+      Enum.map(
+        ["Wantlist", "Backlog", "Playing", "Finished", "Replay", "Dropped"],
+        fn section ->
+          {
+            section,
+            Floki.find(ast, "section h2:fl-contains('#{section}') span.count") |> Floki.text()
+          }
+        end
+      )
+
+    assert counts == [
+             {"Wantlist", "1 card"},
+             {"Backlog", "2 cards"},
+             {"Playing", "1 card"},
+             {"Finished", "4 cards"},
+             {"Replay", ""},
+             {"Dropped", "1 card"}
+           ]
+  end
+
   defp get_list_items(ast, list_name) do
     ast
     |> Floki.find("section h2:fl-contains('#{list_name}') + ul li a")
     |> Enum.map(&Floki.text/1)
   end
 
-  def get_card_tags(ast, card_name) do
+  defp get_card_tags(ast, card_name) do
     ast
     |> Floki.find("li.card a:fl-contains('#{card_name}') + p.tags > span")
     |> Enum.map(&Floki.text/1)
@@ -67,12 +100,13 @@ defmodule Tabula.IndexPageRendererTest do
       %{
         "board" => "Videogames",
         "lists" => [
-          %{"cards" => ["Alan Wake 2"], "name" => "Wantlist"},
+          %{"cards" => ["Alan Wake 2"], "name" => "Wantlist", "path" => "wantlist"},
           %{
             "cards" => ["The Last of Us Part I", "The Last of Us Part II Remastered"],
-            "name" => "Backlog"
+            "name" => "Backlog",
+            "path" => "backlog"
           },
-          %{"cards" => ["Pathfinder Kingmaker"], "name" => "Playing"},
+          %{"cards" => ["Pathfinder Kingmaker"], "name" => "Playing", "path" => "playing"},
           %{
             "cards" => [
               "Oxenfree II: Lost Signals",
@@ -80,10 +114,11 @@ defmodule Tabula.IndexPageRendererTest do
               "Dead Space",
               "The Callisto Protocol"
             ],
-            "name" => "Finished"
+            "name" => "Finished",
+            "path" => "finished"
           },
-          %{"cards" => nil, "name" => "Replay"},
-          %{"cards" => ["Baldur's Gate 3"], "name" => "Dropped"}
+          %{"cards" => nil, "name" => "Replay", "path" => "replay"},
+          %{"cards" => ["Baldur's Gate 3"], "name" => "Dropped", "path" => "dropped"}
         ]
       },
       "test"
