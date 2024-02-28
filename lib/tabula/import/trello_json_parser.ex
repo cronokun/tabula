@@ -47,6 +47,13 @@ defmodule Tabula.Import.TrelloJsonParser do
     - name    list name ("Wantlist", "Playing Now", etc)
     - pos     position of the list
 
+  - actions:    list of all board/card actions
+    - date    when action occured
+    - type    action type, we are interested in "createCard" and "updateCard"
+    - data
+      - card
+        - id    the card id
+
   All positions (of lists, cards, checklists and checkitems) are big integers:
   17329, 33996, 51070, 68057, 85064, 101579, 118504, 135367, 151773, 169172, etc.
   """
@@ -98,14 +105,17 @@ defmodule Tabula.Import.TrelloJsonParser do
     json["cards"]
     |> Enum.filter(&(&1["idList"] == list_id and &1["closed"] == false))
     |> Enum.sort_by(& &1["pos"])
-    |> Enum.map(
-      &%{
-        name: &1["name"],
-        description: &1["desc"],
-        labels: get_card_labels(&1),
-        checklists: get_card_checklists(json, &1["idChecklists"])
+    |> Enum.map(fn card ->
+      %{
+        name: title_to_name(card["name"]),
+        title: card["name"],
+        description: card["desc"],
+        created_at: get_created_at(json, card["id"], card["dateLastActivity"]),
+        updated_at: get_updated_at(json, card["id"], card["dateLastActivity"]),
+        labels: get_card_labels(card),
+        checklists: get_card_checklists(json, card["idChecklists"])
       }
-    )
+    end)
   end
 
   defp get_card_labels(card) do
@@ -129,5 +139,41 @@ defmodule Tabula.Import.TrelloJsonParser do
     cjson["checkItems"]
     |> Enum.sort_by(& &1["pos"])
     |> Enum.map(&{&1["name"], &1["state"] == "complete"})
+  end
+
+  defp get_created_at(json, card_id, fallback) do
+    {:ok, timestamp, _} =
+      json["actions"]
+      |> Enum.find(%{}, &find_by_id_and_type(&1, card_id, ["createCard"]))
+      |> Map.get("date", fallback)
+      |> DateTime.from_iso8601()
+
+    timestamp
+  end
+
+  defp get_updated_at(json, card_id, fallback) do
+    action =
+      json["actions"]
+      |> Enum.filter(
+        &find_by_id_and_type(&1, card_id, ["updateCard", "updateCheckItemStateOnCard"])
+      )
+      |> Enum.sort_by(& &1["date"], :desc)
+      |> case do
+        [] -> %{}
+        list -> hd(list)
+      end
+
+    {:ok, timestamp, _} = Map.get(action, "date", fallback) |> DateTime.from_iso8601()
+
+    timestamp
+  end
+
+  defp find_by_id_and_type(action, id, types),
+    do: action["data"]["card"]["id"] == id and action["type"] in types
+
+  defp title_to_name(title) do
+    title
+    |> String.replace(~w[: / ' ’ . , +], "")
+    |> String.replace(~r/ \(\d{4}(.+)?\)$/, "")
   end
 end

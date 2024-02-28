@@ -6,30 +6,42 @@ defmodule Tabula.Import.MarkdownGenerator do
   def generate(data) do
     [
       metadata(data),
-      header(data),
-      card_image(data),
-      description(data),
-      checklists(data)
+      Enum.join(
+        [
+          header(data),
+          card_image(data),
+          description(data),
+          checklists(data)
+        ],
+        "\n\n"
+      )
     ]
   end
 
-  defp header(%{name: name}), do: ["# ", name, "\n\n"]
+  defp header(%{title: title}), do: ["# #{title}"]
 
-  defp description(%{description: desc}), do: [desc, "\n\n"]
+  defp description(%{description: desc}) do
+    description =
+      desc
+      |> String.replace(~r/\*\*(.+):\*\*/, "\\1::")
+      |> String.replace("Release Date::", "Release::")
+
+    [description]
+  end
 
   defp card_image(%{name: name}) do
-    ["![image](../_images/#{safe_path(name)}.jpeg)", "\n\n"]
+    path =
+      name
+      |> String.replace(~w[: / ' ’ . , ( ) +], "")
+      |> String.downcase()
+      |> String.replace(~r/\s+/, "-")
+
+    ["![image](#{path}.jpeg)"]
   end
 
-  defp checklists(%{checklists: []}), do: []
+  defp checklists(%{checklists: lists}), do: Enum.map(lists, &render_checklist/1)
 
-  defp checklists(%{checklists: lists}) do
-    formated_lists = for list <- lists, do: checklist(list)
-
-    ["## Checklists\n\n", formated_lists]
-  end
-
-  defp checklist(%{name: list_name, items: items}) do
+  defp render_checklist(%{name: list_name, items: items}) do
     list_items =
       for {text, state} <- items,
           do: [
@@ -38,37 +50,31 @@ defmodule Tabula.Import.MarkdownGenerator do
             "\n"
           ]
 
-    ["### #{list_name}\n\n", list_items]
+    ["## #{list_name}\n\n", list_items]
   end
 
   defp metadata(data) do
     [
       "---\n",
       timestamps(data),
-      title(data),
       tags(data),
       "---\n"
     ]
   end
 
-  defp title(%{name: name}), do: ["title: ", safe_path(name), "\n"]
-
+  defp tags(%{labels: []}), do: []
   defp tags(%{labels: tags}), do: ["tags: ", Enum.join(tags, ", "), "\n"]
 
-  defp timestamps(_data) do
-    timestamp = DateTime.utc_now() |> DateTime.to_iso8601()
-
+  defp timestamps(data) do
     [
       "created_at: ",
-      timestamp,
+      format_timestamp(data.created_at),
       "\n",
       "updated_at: ",
-      timestamp,
+      format_timestamp(data.updated_at),
       "\n"
     ]
   end
 
-  defp safe_path(path) when is_binary(path) do
-    path |> String.replace(":", " -") |> String.replace("/", " - ")
-  end
+  defp format_timestamp(timestamp), do: Calendar.strftime(timestamp, "%Y-%m-%d %H:%M:%S")
 end
