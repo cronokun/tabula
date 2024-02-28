@@ -65,7 +65,11 @@ defmodule Tabula.Convert do
     # Need to wrap AST into a body tag to make `Floki.find` work.
     [{"img", attrs, []}] = Floki.find({"body", [], ast}, @cover_image_selector)
     src = List.keyfind(attrs, "src", 0) |> elem(1)
-    Map.put(context, "image_path", "/assets/images/#{Storage.board_name()}/#{src}")
+
+    case src do
+      "no-cover.png" -> Map.put(context, "image_path", nil)
+      img -> Map.put(context, "image_path", "/assets/images/#{Storage.board_name()}/#{img}")
+    end
   end
 
   defp split_tags(context), do: Map.update(context, "tags", [], &String.split(&1, ", "))
@@ -95,6 +99,8 @@ defmodule Tabula.Convert do
        ]}
     ]
   end
+
+  defp process_images_src(ast, nil), do: ast
 
   defp process_images_src(ast, img_path) do
     Floki.find_and_update(ast, @cover_image_selector, fn {"img", attrs} ->

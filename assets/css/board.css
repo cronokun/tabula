@@ -37,22 +37,15 @@ section > h2 + ul {
 }
 
 li.card {
+  flex: 0 0 min-content;
   margin-right: 15px;
   margin-bottom: 10px;
-}
-
-body.movies li.card,
-body.tv-series li.card {
-  width: 200px;
-}
-
-body.videogames li.card {
-  width: 200px;
 }
 
 li a {
   text-decoration: none;
   color: black;
+  display: block;
 }
 
 li img.cover {
@@ -63,8 +56,6 @@ li img.cover {
 body.movies li.card img.cover,
 body.tv-series li.card img.cover {
   height: 300px;
-  width: 200px;
-  object-fit: cover;
 }
 
 body.videogames li.card img.cover {
@@ -86,6 +77,7 @@ body.tv-series li.card img.no-cover {
 
 body.videogames li.card img.no-cover {
   height: 200px;
+  width: 200px;
 }
 
 .tags {
