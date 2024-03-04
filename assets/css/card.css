@@ -27,11 +27,12 @@ h1 + p > img {
 
 dl {
   display: grid;
-  grid-template-columns: 120px auto;
+  grid-template-columns: max-content auto;
 }
 
 dl dt {
   font-weight: 600;
+  padding-right: 1em;
 }
 dl dt::after {
   content: ":"
