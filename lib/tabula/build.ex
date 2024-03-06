@@ -16,6 +16,8 @@ defmodule Tabula.Build do
       manage_dirs(board)
       create_pages(board)
       create_index_page(board)
+    else
+      error -> IO.puts("Something went wrong: #{inspect error}")
     end
   end
 
