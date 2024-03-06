@@ -9,7 +9,16 @@ body {
   margin-right: 25px;
 }
 
-h1 {
+span.list-tag {
+  font-family: Helvetica Neue;
+  font-size: 11pt;
+  font-weight: 400;
+  border-radius: 5px;
+  color: #777777;
+  padding: 2px 4px;
+  border: 1px solid #a1a1a1;
+  display: block;
+  width: max-content;
 }
 
 h2 {

@@ -1,6 +1,6 @@
 defmodule Tabula.Board.Card do
-  @enforce_keys [:name, :source_path, :target_path]
-  defstruct [:name, :source_path, :target_path]
+  @enforce_keys [:name, :list, :source_path, :target_path]
+  defstruct [:name, :list, :source_path, :target_path]
 end
 
 defmodule Tabula.Board.List do
@@ -36,6 +36,7 @@ defmodule Tabula.Board do
 
                 %Card{
                   name: card,
+                  list: list["name"],
                   source_path: Path.expand("#{dir}/#{path}.md"),
                   target_path: Path.expand("#{@release_dir}/#{data["board"]}/#{path}.html")
                 }
