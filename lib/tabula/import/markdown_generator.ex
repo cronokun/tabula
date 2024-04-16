@@ -1,5 +1,5 @@
 defmodule Tabula.Import.MarkdownGenerator do
-  @moduledoc ~S"""
+  @moduledoc """
   Generate Markdown for a card.
   """
 

@@ -1,5 +1,5 @@
 defmodule Tabula.Storage do
-  @moduledoc ~S"""
+  @moduledoc """
   Simple API to access cards data.
 
   It's used to store card's data (like cover image, due dates and tags) when parsing markdown

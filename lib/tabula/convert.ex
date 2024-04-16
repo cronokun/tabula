@@ -1,5 +1,5 @@
 defmodule Tabula.Convert do
-  @moduledoc ~S"""
+  @moduledoc """
   Create HTML files from Markdown cards. This is simple orchestrating module, all real work is done in other modules.
 
   TODO: add tests.

@@ -1,5 +1,5 @@
 defmodule Tabula.IndexPageRenderer do
-  @moduledoc ~S"""
+  @moduledoc """
   Render index.html page for the board.
   """
 

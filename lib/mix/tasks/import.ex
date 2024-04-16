@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Import do
-  @moduledoc ~S"""
+  @moduledoc """
   Import cards from JSON file from Trello.
 
       $ mix import PATH

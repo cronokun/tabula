@@ -1,5 +1,5 @@
 defmodule Tabula.Markdown.Renderer do
-  @moduledoc ~S"""
+  @moduledoc """
   Render AST to HTML and wrap it in a HTML document.
   """
 

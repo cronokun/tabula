@@ -1,5 +1,5 @@
 defmodule Tabula.Import do
-  @moduledoc ~S"""
+  @moduledoc """
   Import data from Trello.
 
   Read and parse JSON file, create Markdown files for each card.

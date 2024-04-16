@@ -1,5 +1,5 @@
 defmodule Tabula.Import.TrelloJsonParser do
-  @moduledoc ~S"""
+  @moduledoc """
   Extract data from JSON files exported from Trello.
 
   ### JSON files from Trello

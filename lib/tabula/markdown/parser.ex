@@ -1,5 +1,5 @@
 defmodule Tabula.Markdown.Parser do
-  @moduledoc ~S"""
+  @moduledoc """
   Parse Markdown, process and convert to HTML.
   """
 

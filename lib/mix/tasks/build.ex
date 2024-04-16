@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.Build do
-  @moduledoc ~S"""
+  @moduledoc """
   Build website for the specified board.
 
     $ mix build BOARD_DIR_PATH

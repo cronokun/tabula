@@ -1,5 +1,5 @@
 defmodule Tabula.AstPostProcessor do
-  @moduledoc ~S"""
+  @moduledoc """
   Post-process AST after markdown parser.
   """
 

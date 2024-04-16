@@ -1,5 +1,5 @@
 defmodule Tabula.Build do
-  @moduledoc ~S"""
+  @moduledoc """
   Build the "board": convert MD files to HTML, create `index.html`, copy assets, etc.
   """
 
@@ -17,7 +17,7 @@ defmodule Tabula.Build do
       create_pages(board)
       create_index_page(board)
     else
-      error -> IO.puts("Something went wrong: #{inspect error}")
+      error -> IO.puts("Something went wrong: #{inspect(error)}")
     end
   end
 
