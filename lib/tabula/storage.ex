@@ -8,8 +8,18 @@ defmodule Tabula.Storage do
 
   use Agent
 
+  # FIXME: This allowes to store only one board data at a time, so it can't be used
+  # to process boards concurently.
   def init(board_name) do
-    Agent.start_link(fn -> %{board_name: board_name, cards: %{}} end, name: __MODULE__)
+    init_fn = fn -> %{board_name: board_name, cards: %{}} end
+
+    case Agent.start_link(init_fn, name: __MODULE__) do
+      {:ok, _pid} -> :ok
+
+      {:error, {:already_started, pid}} ->
+          Agent.stop(pid)
+          init(board_name)
+    end
   end
 
   def add_card(title, card) do

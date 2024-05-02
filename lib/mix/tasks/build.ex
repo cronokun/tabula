@@ -19,8 +19,22 @@ defmodule Mix.Tasks.Build do
   use Mix.Task
 
   @impl Mix.Task
-  def run([path | _rest]) do
-    Tabula.Build.run(path)
+  def run(opts) do
+    case parse_options(opts) do
+      [path: path] -> Tabula.Build.run(path)
+      [] -> for path <- all_boards(), do: Tabula.Build.run(path)
+    end
+
     IO.puts("DONE!")
+  end
+
+  defp all_boards do
+    File.ls!("priv/boards/")
+    |> Enum.map(&"priv/boards/#{&1}")
+    |> Enum.filter(&File.dir?/1)
+  end
+
+  defp parse_options(opts) do
+    OptionParser.parse(opts, strict: [path: :string]) |> elem(0)
   end
 end

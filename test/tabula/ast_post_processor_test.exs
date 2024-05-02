@@ -36,6 +36,19 @@ defmodule Tabula.AstPostProcessorTest do
            }
   end
 
+  test ".modify_ast/3 without cover image" do
+    ast = [{"h1", [], ["Returnal (PS5)"]}, {"p", [], ["This is okayish game."]}]
+    modify_ast(ast, @card, @context)
+
+    assert Storage.get_card("Returnal") == %{
+             "created_at" => "2023-10-11 18:24:00",
+             "updated_at" => "2023-10-11 18:27:00",
+             "image_path" => nil,
+             "tags" => ["PS5", "PS+ Extra", "WTF"],
+             "title" => "Returnal (PS5)"
+           }
+  end
+
   test ".modify_ast/3 adds list name to AST" do
     ast = modify_ast(@ast, @card, @context)
     assert Floki.find(ast, "h1 span.list-tag") |> Floki.text() == "Backlog"

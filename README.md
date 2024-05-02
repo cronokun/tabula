@@ -2,6 +2,24 @@
 
 Simple staticaly-generated site with boards, lists and cards.
 
+
+## Usage
+
+Put your boards into `priv/boards/` dir, then run
+
+```
+mix build
+```
+
+to build all boards, or
+
+```
+mix build --path priv/boards/board_name/
+```
+
+to build specific board.
+
+
 ## MVP Description
 
 - single board supported

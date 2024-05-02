@@ -97,12 +97,15 @@ defmodule Tabula.AstPostProcessor do
 
   defp set_image_path(context, ast) do
     # FIXME: Need to wrap AST into a body tag to make `Floki.find` work.
-    [{"img", attrs, []}] = Floki.find({"body", [], ast}, @cover_image_selector)
-    src = List.keyfind(attrs, "src", 0) |> elem(1)
+    img =
+      {"body", [], ast}
+      |> Floki.find(@cover_image_selector)
+      |> Floki.attribute("src")
+      |> case do
+        [] -> nil
+        [img] -> "/assets/images/#{Storage.board_name()}/#{img}"
+      end
 
-    case src do
-      "no-cover.png" -> Map.put(context, "image_path", nil)
-      img -> Map.put(context, "image_path", "/assets/images/#{Storage.board_name()}/#{img}")
-    end
+    Map.put(context, "image_path", img)
   end
 end
