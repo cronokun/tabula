@@ -25,7 +25,7 @@ defmodule Mix.Tasks.Build do
       [] -> for path <- all_boards(), do: Tabula.Build.run(path)
     end
 
-    IO.puts("DONE!")
+    IO.puts("\nDONE!")
   end
 
   defp all_boards do

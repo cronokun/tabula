@@ -19,26 +19,34 @@ defmodule Tabula.Build do
       create_pages(board)
       create_index_page(board)
     else
-      error -> IO.puts("Something went wrong: #{inspect(error)}")
+      error -> info("Something went wrong: #{inspect(error)}", :error)
     end
   end
 
   defp create_index_page(board) do
-    IO.puts("creating index page")
+    info("creating index page")
     html = IndexPageRenderer.to_html(board)
     File.write!(board.index_path, html)
     :ok
   end
 
   defp create_pages(board) do
-    for list <- board.lists, card <- list.cards do
-      IO.puts("creating \"#{card.name}\" card")
-      result = Convert.convert_file(card)
+    info("creating card pages")
 
-      if result == :skipped do
-        IO.puts("#{IO.ANSI.yellow()}WARNING: Can't read file, skipping#{IO.ANSI.reset()}")
+    stats =
+      for list <- board.lists, card <- list.cards, reduce: %{done: 0, skipped: 0} do
+        acc ->
+          case Convert.convert_file(card) do
+            :skipped ->
+              info("WARNING: Can't read file '#{card.source_path}', skipping", :warning)
+              Map.update(acc, :skipped, 0, &(&1 + 1))
+
+            _ ->
+              Map.update(acc, :done, 0, &(&1 + 1))
+          end
       end
-    end
+
+    info("#{stats.done} created, #{stats.skipped} skipped")
 
     :ok
   end
@@ -47,7 +55,7 @@ defmodule Tabula.Build do
   @release_dir Path.expand("release")
 
   defp manage_dirs(board) do
-    IO.puts("copying assets")
+    info("copying assets")
     destination = Path.join([@release_dir, board.name])
     dest_img_dir = Path.join([@release_dir, "assets/images/", board.name])
     source_img_dir = Path.join([board.dir, "_images/"])
@@ -59,4 +67,13 @@ defmodule Tabula.Build do
     for list <- board.lists, do: File.mkdir_p!(Path.join([destination, list.path]))
     :ok
   end
+
+  defp info(message, type \\ :normal, padding \\ "  ")
+  defp info(message, :normal, padding), do: IO.puts(padding <> message)
+
+  defp info(message, :error, padding),
+    do: IO.puts(IO.ANSI.red() <> padding <> message <> IO.ANSI.reset())
+
+  defp info(message, :warning, padding),
+    do: IO.puts(IO.ANSI.yellow() <> padding <> message <> IO.ANSI.reset())
 end
