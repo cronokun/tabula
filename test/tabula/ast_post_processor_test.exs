@@ -14,6 +14,7 @@ defmodule Tabula.AstPostProcessorTest do
   @card %Card{
     name: "Returnal",
     list: "Backlog",
+    board: "Videogames",
     source_path: "Videogames/Backlog/Returnal.md",
     target_path: "Videogames/Backlog/Returnal.html"
   }
@@ -24,13 +25,18 @@ defmodule Tabula.AstPostProcessorTest do
     "tags" => "PS5, PS+ Extra, WTF"
   }
 
+  setup do
+    Storage.init()
+    :ok
+  end
+
   test ".modify_ast/3 modifies and saves card's context to the storage" do
     modify_ast(@ast, @card, @context)
 
-    assert Storage.get_card("Returnal") == %{
+    assert Storage.get(@card) == %{
              "created_at" => "2023-10-11 18:24:00",
              "updated_at" => "2023-10-11 18:27:00",
-             "image_path" => "/assets/images/Test Board/returnal.jpg",
+             "image_path" => "/assets/images/Videogames/returnal.jpg",
              "tags" => ["PS5", "PS+ Extra", "WTF"],
              "title" => "Returnal (PS5)"
            }
@@ -40,7 +46,7 @@ defmodule Tabula.AstPostProcessorTest do
     ast = [{"h1", [], ["Returnal (PS5)"]}, {"p", [], ["This is okayish game."]}]
     modify_ast(ast, @card, @context)
 
-    assert Storage.get_card("Returnal") == %{
+    assert Storage.get(@card) == %{
              "created_at" => "2023-10-11 18:24:00",
              "updated_at" => "2023-10-11 18:27:00",
              "image_path" => nil,
@@ -63,7 +69,7 @@ defmodule Tabula.AstPostProcessorTest do
     ast = modify_ast(@ast, @card, @context)
 
     assert Floki.find(ast, "img") |> Floki.attribute("src") ==
-             ["../../assets/images/Test Board/returnal.jpg"]
+             ["../../assets/images/Videogames/returnal.jpg"]
   end
 
   test ".modify_ast/3 wraps HTML layout around AST" do

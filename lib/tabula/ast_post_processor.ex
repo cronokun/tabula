@@ -10,9 +10,9 @@ defmodule Tabula.AstPostProcessor do
       context
       |> split_tags()
       |> set_title_from_header(ast)
-      |> set_image_path(ast)
+      |> set_image_path(ast, card.board)
 
-    Storage.add_card(card.name, context)
+    Storage.put(card, context)
 
     ast
     |> insert_list_name(card.list)
@@ -95,7 +95,7 @@ defmodule Tabula.AstPostProcessor do
     Map.put(context, "title", title)
   end
 
-  defp set_image_path(context, ast) do
+  defp set_image_path(context, ast, board_name) do
     # FIXME: Need to wrap AST into a body tag to make `Floki.find` work.
     img =
       {"body", [], ast}
@@ -103,7 +103,7 @@ defmodule Tabula.AstPostProcessor do
       |> Floki.attribute("src")
       |> case do
         [] -> nil
-        [img] -> "/assets/images/#{Storage.board_name()}/#{img}"
+        [img] -> "/assets/images/#{board_name}/#{img}"
       end
 
     Map.put(context, "image_path", img)

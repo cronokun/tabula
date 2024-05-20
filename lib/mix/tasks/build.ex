@@ -20,6 +20,8 @@ defmodule Mix.Tasks.Build do
 
   @impl Mix.Task
   def run(opts) do
+    Tabula.Storage.init()
+
     case parse_options(opts) do
       [path: path] -> Tabula.Build.run(path)
       [] -> for path <- all_boards(), do: Tabula.Build.run(path)

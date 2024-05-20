@@ -1,6 +1,6 @@
 defmodule Tabula.Board.Card do
-  @enforce_keys [:name, :list, :source_path, :target_path]
-  defstruct [:name, :list, :source_path, :target_path]
+  @enforce_keys [:board, :name, :list, :source_path, :target_path]
+  defstruct [:board, :name, :list, :source_path, :target_path]
 end
 
 defmodule Tabula.Board.List do
@@ -11,9 +11,6 @@ end
 defmodule Tabula.Board do
   @enforce_keys [:name, :dir, :index_path, :lists]
   defstruct name: nil, dir: nil, index_path: nil, lists: []
-
-  alias Tabula.Board.Card
-  alias Tabula.Board.List, as: BList
 
   # FIXME: this is duplicated; move to config!
   @release_dir Path.expand("release")
@@ -27,16 +24,17 @@ defmodule Tabula.Board do
         for list <- List.wrap(data["lists"]) do
           list_path = list["path"] || safe_path(list["name"])
 
-          %BList{
+          %Tabula.Board.List{
             name: list["name"],
             path: list_path,
             cards:
               for card <- List.wrap(list["cards"]) do
                 path = Path.join([list_path, safe_path(card)])
 
-                %Card{
+                %Tabula.Board.Card{
                   name: card,
                   list: list["name"],
+                  board: data["board"],
                   source_path: Path.expand("#{dir}/#{path}.md"),
                   target_path: Path.expand("#{@release_dir}/#{data["board"]}/#{path}.html")
                 }

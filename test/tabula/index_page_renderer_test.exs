@@ -3,6 +3,7 @@ defmodule Tabula.IndexPageRendererTest do
 
   alias Tabula.IndexPageRenderer
   alias Tabula.Board
+  alias Tabula.Board.Card
   alias Tabula.Storage
 
   setup_all do
@@ -126,40 +127,52 @@ defmodule Tabula.IndexPageRendererTest do
   end
 
   defp setup_storage do
-    Storage.init("Test Board")
+    Storage.init()
 
-    Storage.add_card("Alan Wake 2", %{
+    put_card("Alan Wake 2", %{
       "title" => "Alan Wake 2",
       "image_path" => "alan-wake-2.jpg",
       "tags" => ["PS5", "18+"]
     })
 
-    Storage.add_card("The Last of Us Part I", %{
+    put_card("The Last of Us Part I", %{
       "title" => "The Last of Us Part I",
       "image_path" => "last-of-us-part1.jpg"
     })
 
-    Storage.add_card("The Last of Us Part II Remastered", %{
+    put_card("The Last of Us Part II Remastered", %{
       "title" => "The Last of Us Part II Remastered",
       "image_path" => "last-of-us-part2-remastered.jpg"
     })
 
-    Storage.add_card("Pathfinder Kingmaker", %{
+    put_card("Pathfinder Kingmaker", %{
       "title" => "Pathfinder: Kingmaker",
       "image_path" => "pathfinder-kingmaker.jpg"
     })
 
-    Storage.add_card("Oxenfree II Lost Signals", %{"title" => "Oxenfree II Lost Signals"})
-    Storage.add_card("Dead Space", %{"title" => "Dead Space", "image_path" => "dead-space.jpg"})
+    put_card("Oxenfree II Lost Signals", %{"title" => "Oxenfree II Lost Signals"})
+    put_card("Dead Space", %{"title" => "Dead Space", "image_path" => "dead-space.jpg"})
 
-    Storage.add_card("The Callisto Protocol", %{
+    put_card("The Callisto Protocol", %{
       "title" => "The Callisto Protocol",
       "image_path" => "the-callisto-protocol.jpg"
     })
 
-    Storage.add_card("Baldur's Gate 3", %{
+    put_card("Baldur's Gate 3", %{
       "title" => "Baldur's Gate 3",
       "image_path" => "baldurs-gate-3.jpg"
     })
+  end
+
+  defp put_card(name, data) do
+    card = %Card{
+      name: name,
+      board: "Videogames",
+      list: "Playing",
+      source_path: "foo",
+      target_path: "bar"
+    }
+
+    Storage.put(card, data)
   end
 end

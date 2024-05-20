@@ -6,35 +6,20 @@ defmodule Tabula.Storage do
   and then retrieve that data when generating board's index page.
   """
 
-  use Agent
+  alias Tabula.Board.Card
 
-  # FIXME: This allowes to store only one board data at a time, so it can't be used
-  # to process boards concurently.
-  def init(board_name) do
-    init_fn = fn -> %{board_name: board_name, cards: %{}} end
+  @table :tabula_cards
 
-    case Agent.start_link(init_fn, name: __MODULE__) do
-      {:ok, _pid} -> :ok
+  def init, do: :ets.new(@table, [:named_table])
 
-      {:error, {:already_started, pid}} ->
-          Agent.stop(pid)
-          init(board_name)
+  def get(card) when is_struct(card, Card) do
+    case :ets.lookup(@table, {card.board, card.name}) do
+      [] -> nil
+      [{_key, data}] -> data
     end
   end
 
-  def add_card(title, card) do
-    Agent.update(__MODULE__, fn board -> put_in(board, [:cards, title], card) end)
-  end
-
-  def get_card(card_name) do
-    Agent.get(__MODULE__, fn board -> board.cards[card_name] end)
-  end
-
-  def board_name do
-    Agent.get(__MODULE__, fn board -> board[:board_name] end)
-  end
-
-  def cards do
-    Agent.get(__MODULE__, & &1)
+  def put(card, data) when is_struct(card, Card) do
+    :ets.insert(@table, {{card.board, card.name}, data})
   end
 end

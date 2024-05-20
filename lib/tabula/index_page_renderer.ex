@@ -30,22 +30,22 @@ defmodule Tabula.IndexPageRenderer do
     |> String.trim_trailing()
   end
 
-  defp lists_to_html(lists), do: Enum.map(lists, &list_ast/1)
-
-  defp list_ast(list) do
-    {"section", [],
-     [
-       {"h2", [{"id", list.path}],
-        [
-          list.name,
-          list_cards_counter(list)
-        ]},
-       {"ul", [], Enum.map(list.cards, &card_ast/1)}
-     ]}
+  defp lists_to_html(lists) do
+    Enum.map(lists, fn list ->
+      {"section", [],
+       [
+         {"h2", [{"id", list.path}],
+          [
+            list.name,
+            list_cards_counter(list)
+          ]},
+         {"ul", [], Enum.map(list.cards, &card_ast/1)}
+       ]}
+    end)
   end
 
   defp card_ast(card) do
-    data = Storage.get_card(card.name)
+    data = Storage.get(card)
 
     {"li", [{"class", "card"}],
      [
