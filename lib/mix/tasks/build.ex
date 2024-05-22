@@ -22,9 +22,11 @@ defmodule Mix.Tasks.Build do
   def run(opts) do
     Tabula.Storage.init()
 
-    case parse_options(opts) do
-      [path: path] -> Tabula.Build.run(path)
-      [] -> for path <- all_boards(), do: Tabula.Build.run(path)
+    opts = parse_options(opts)
+
+    case opts do
+      %{path: path} -> Tabula.Build.run(path, opts)
+      _ -> for path <- all_boards(), do: Tabula.Build.run(path, opts)
     end
 
     IO.puts("\nDONE!")
@@ -37,6 +39,9 @@ defmodule Mix.Tasks.Build do
   end
 
   defp parse_options(opts) do
-    OptionParser.parse(opts, strict: [path: :string]) |> elem(0)
+    OptionParser.parse(opts, strict: [path: :string, verbose: :boolean])
+    |> elem(0)
+    |> Keyword.put_new(:verbose, false)
+    |> Map.new()
   end
 end
