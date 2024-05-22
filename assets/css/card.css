@@ -33,6 +33,7 @@ h1 + p {
 
 h1 + p > img {
   height: 500px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 dl {

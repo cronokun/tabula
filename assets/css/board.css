@@ -52,6 +52,7 @@ li a {
 li img.cover {
   display: block;
   margin-bottom: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 body.movies li.card img.cover,
