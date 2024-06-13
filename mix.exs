@@ -5,7 +5,7 @@ defmodule Tabula.MixProject do
     [
       app: :tabula,
       version: "0.1.0",
-      elixir: "~> 1.15",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -23,7 +23,7 @@ defmodule Tabula.MixProject do
     [
       {:jason, "~> 1.4"},
       {:earmark_parser, "~> 1.4"},
-      {:floki, "~> 0.35.2"},
+      {:floki, "~> 0.36.2"},
       {:yaml_elixir, "~> 2.9"}
     ]
   end
