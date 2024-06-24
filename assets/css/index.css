@@ -1,0 +1,54 @@
+html {
+  font-family: "Verdana", "Geneva", sans-serif;
+  font-size: 10pt;
+}
+
+body {
+  display: flex;
+  margin: 5px 5px 5px 25px;
+}
+
+h1 {
+  font-weight: 600;
+  margin-top: 20px;
+  margin-block-start: 0;
+}
+
+h2 {
+  font-weight: 400;
+  margin-top: 20px;
+  margin-block-start: 0;
+}
+
+section {
+  flex: 0 0 content;
+  margin-left: 50px;
+}
+
+section > h2 + ul {
+  list-style-type: none;
+  margin-block-start: 0;
+  padding-left: 0;
+}
+
+li a {
+  display: inline-block;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+li span.count {
+  background: #F5F5F5;
+  border-radius: 4px;
+  color: #AAAAAA;
+  display: inline-block;
+  font-family: Helvetica Neue;
+  font-size: 10pt;
+  font-variant: super;
+  font-weight: 500;
+  margin-left: 5px;
+  min-width: 20px;
+  padding: 2px 1px;
+  text-align: center;
+  vertical-align: middle;
+}
