@@ -1,6 +1,6 @@
 defmodule Tabula.Board.Card do
   @enforce_keys [:board, :name, :list, :source_path, :target_path]
-  defstruct [:board, :name, :list, :source_path, :target_path]
+  defstruct [:board, :name, :subtitle, :list, :source_path, :target_path]
 end
 
 defmodule Tabula.Board.List do

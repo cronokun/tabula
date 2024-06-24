@@ -42,6 +42,14 @@ li.card {
   margin-bottom: 20px;
 }
 
+li span.subtitle {
+  display: inline-block;
+  color: #505050;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 9pt;
+}
+
 li a {
   text-decoration: none;
   color: black;
@@ -55,8 +63,7 @@ li img.cover {
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-body.movies li.card img.cover,
-body.tv-series li.card img.cover {
+body li.card img.cover {
   height: 300px;
 }
 
@@ -71,8 +78,7 @@ li img.no-cover {
   background-color: #DDD;
 }
 
-body.movies li.card img.no-cover,
-body.tv-series li.card img.no-cover {
+body li.card img.no-cover {
   height: 300px;
   width: 200px;
 }

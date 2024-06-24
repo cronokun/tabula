@@ -6,82 +6,131 @@ defmodule Tabula.IndexPageRendererTest do
   alias Tabula.Board.Card
   alias Tabula.Storage
 
-  setup_all do
-    setup_storage()
-    board = test_board()
-    html = IndexPageRenderer.to_html(board)
-    ast = Floki.parse_document!(html)
+  describe ".to_html/1 with test board" do
+    setup do
+      setup_storage()
+      board = test_board()
+      html = IndexPageRenderer.to_html(board)
+      ast = Floki.parse_document!(html)
 
-    {:ok, %{ast: ast}}
+      {:ok, %{ast: ast}}
+    end
+
+    test ".to_html/1 renders all lists", %{ast: ast} do
+      section_headers =
+        ast
+        |> Floki.find("section h2")
+        |> Enum.map(fn {"h2", _attrs, content} ->
+          content |> hd() |> String.trim()
+        end)
+
+      assert section_headers == [
+               "Wantlist",
+               "Backlog",
+               "Playing",
+               "Finished",
+               "Replay",
+               "Dropped"
+             ]
+    end
+
+    test ".to_html/1 renders list header ancors", %{ast: ast} do
+      section_ids =
+        ast
+        |> Floki.find("section h2")
+        |> Enum.map(fn {"h2", attrs, _content} ->
+          attrs |> List.keyfind("id", 0) |> elem(1)
+        end)
+
+      assert section_ids == ["wantlist", "backlog", "playing", "finished", "replay", "dropped"]
+    end
+
+    test ".to_html/1 renders all list items", %{ast: ast} do
+      assert get_list_items(ast, "Wantlist") == ["Alan Wake 2"]
+
+      assert get_list_items(ast, "Backlog") == [
+               "The Last of Us Part I",
+               "The Last of Us Part II Remastered"
+             ]
+
+      assert get_list_items(ast, "Playing") == ["Pathfinder: Kingmaker"]
+
+      assert get_list_items(ast, "Finished") == [
+               "Oxenfree II: Lost Signals",
+               "Hogwarts Legacy",
+               "Dead Space",
+               "The Callisto Protocol"
+             ]
+
+      assert get_list_items(ast, "Dropped") == ["Baldur's Gate 3"]
+      assert get_list_items(ast, "Replay") == []
+    end
+
+    test ".to_html/1 renders card tags", %{ast: ast} do
+      assert get_card_tags(ast, "Alan Wake 2") == ["PS5", "18+"]
+    end
+
+    test ".to_html/1 renders list items count", %{ast: ast} do
+      counts =
+        Enum.map(
+          ["Wantlist", "Backlog", "Playing", "Finished", "Replay", "Dropped"],
+          fn section ->
+            {
+              section,
+              Floki.find(ast, "section h2:fl-contains('#{section}') span.count") |> Floki.text()
+            }
+          end
+        )
+
+      assert counts == [
+               {"Wantlist", "1 card"},
+               {"Backlog", "2 cards"},
+               {"Playing", "1 card"},
+               {"Finished", "4 cards"},
+               {"Replay", ""},
+               {"Dropped", "1 card"}
+             ]
+    end
   end
 
-  test ".to_html/1 renders all lists", %{ast: ast} do
-    section_headers =
-      ast
-      |> Floki.find("section h2")
-      |> Enum.map(fn {"h2", _attrs, content} ->
-        content |> hd() |> String.trim()
-      end)
+  test ".to_html/1 renders card's subtitle" do
+    Storage.init()
 
-    assert section_headers == ["Wantlist", "Backlog", "Playing", "Finished", "Replay", "Dropped"]
-  end
+    Storage.put(
+      %Card{
+        name: "Neuromancer",
+        board: "Books",
+        list: "Read",
+        source_path: "neuromancer.md",
+        target_path: "neuromancer.html"
+      },
+      %{
+        "title" => "Neuromancer (1984)",
+        "subtitle" => "William Gibson"
+      }
+    )
 
-  test ".to_html/1 renders list header ancors", %{ast: ast} do
-    section_ids =
-      ast
-      |> Floki.find("section h2")
-      |> Enum.map(fn {"h2", attrs, _content} ->
-        attrs |> List.keyfind("id", 0) |> elem(1)
-      end)
-
-    assert section_ids == ["wantlist", "backlog", "playing", "finished", "replay", "dropped"]
-  end
-
-  test ".to_html/1 renders all list items", %{ast: ast} do
-    assert get_list_items(ast, "Wantlist") == ["Alan Wake 2"]
-
-    assert get_list_items(ast, "Backlog") == [
-             "The Last of Us Part I",
-             "The Last of Us Part II Remastered"
-           ]
-
-    assert get_list_items(ast, "Playing") == ["Pathfinder: Kingmaker"]
-
-    assert get_list_items(ast, "Finished") == [
-             "Oxenfree II: Lost Signals",
-             "Hogwarts Legacy",
-             "Dead Space",
-             "The Callisto Protocol"
-           ]
-
-    assert get_list_items(ast, "Dropped") == ["Baldur's Gate 3"]
-    assert get_list_items(ast, "Replay") == []
-  end
-
-  test ".to_html/1 renders card tags", %{ast: ast} do
-    assert get_card_tags(ast, "Alan Wake 2") == ["PS5", "18+"]
-  end
-
-  test ".to_html/1 renders list items count", %{ast: ast} do
-    counts =
-      Enum.map(
-        ["Wantlist", "Backlog", "Playing", "Finished", "Replay", "Dropped"],
-        fn section ->
-          {
-            section,
-            Floki.find(ast, "section h2:fl-contains('#{section}') span.count") |> Floki.text()
-          }
-        end
+    ast =
+      Board.build(
+        %{
+          "board" => "Books",
+          "lists" => [
+            %{
+              "name" => "Read",
+              "cards" => ["Neuromancer"]
+            }
+          ]
+        },
+        "test_dir"
       )
+      |> IndexPageRenderer.to_html()
+      |> Floki.parse_document!()
 
-    assert counts == [
-             {"Wantlist", "1 card"},
-             {"Backlog", "2 cards"},
-             {"Playing", "1 card"},
-             {"Finished", "4 cards"},
-             {"Replay", ""},
-             {"Dropped", "1 card"}
-           ]
+    subtitle = Floki.find(ast, "li.card a span.subtitle") |> Floki.text()
+    title = Floki.find(ast, "li.card a") |> Floki.text() |> String.replace_suffix(subtitle, "")
+
+    assert title == "Neuromancer (1984)"
+    assert subtitle == "William Gibson"
   end
 
   defp get_list_items(ast, list_name) do

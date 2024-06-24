@@ -75,7 +75,7 @@ defmodule Tabula.AstPostProcessor do
 
   defp due_date_tag(_context), do: []
 
-  @cover_image_selector "h1 + p > img"
+  @cover_image_selector "h1 ~ p img"
 
   defp expand_image_src(ast, nil), do: ast
 
@@ -91,14 +91,22 @@ defmodule Tabula.AstPostProcessor do
   defp split_tags(context), do: Map.update(context, "tags", [], &String.split(&1, ", "))
 
   defp set_title_from_header(context, ast) do
-    title = Enum.find_value(ast, "Untitled", fn {"h1", _, content} -> hd(content) end)
-    Map.put(context, "title", title)
+    [{"h1", _, [title]}] = Floki.find(ast, "h1")
+
+    subtitle =
+      case Floki.find(ast, "h1 + h2") do
+        [{"h2", _, [title]}] -> title
+        [] -> nil
+      end
+
+    context
+    |> Map.put("title", title)
+    |> Map.put("subtitle", subtitle)
   end
 
   defp set_image_path(context, ast, board_name) do
-    # FIXME: Need to wrap AST into a body tag to make `Floki.find` work.
     img =
-      {"body", [], ast}
+      ast
       |> Floki.find(@cover_image_selector)
       |> Floki.attribute("src")
       |> case do

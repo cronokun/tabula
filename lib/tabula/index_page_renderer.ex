@@ -52,7 +52,7 @@ defmodule Tabula.IndexPageRenderer do
        {"a", [{"href", card.target_path}, {"title", data["title"]}],
         [
           card_cover(data),
-          data["title"] || card.name
+          card_title(card, data)
         ]},
        tags_block(data)
      ]}
@@ -68,14 +68,17 @@ defmodule Tabula.IndexPageRenderer do
     {"img", [{"src", src}, {"alt", card["title"]}, {"class", class}], []}
   end
 
-  defp css_board_name(board) do
-    # FIXME: replace with string tokenization
-    case board.name do
-      "Movies" -> "movies"
-      "TV Series" -> "tv-series"
-      "Videogames" -> "videogames"
-      other -> other
+  defp card_title(card, data) do
+    title = data["title"] || card.name
+
+    case data["subtitle"] do
+      nil -> title
+      subtitle -> [title, {"span", [{"class", "subtitle"}], [subtitle]}]
     end
+  end
+
+  defp css_board_name(board) do
+    board.name |> String.downcase() |> String.replace(" ", "-")
   end
 
   defp tags_block(data) do

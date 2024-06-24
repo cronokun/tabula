@@ -38,7 +38,8 @@ defmodule Tabula.AstPostProcessorTest do
              "updated_at" => "2023-10-11 18:27:00",
              "image_path" => "/assets/images/Videogames/returnal.jpg",
              "tags" => ["PS5", "PS+ Extra", "WTF"],
-             "title" => "Returnal (PS5)"
+             "title" => "Returnal (PS5)",
+             "subtitle" => nil
            }
   end
 
@@ -51,7 +52,8 @@ defmodule Tabula.AstPostProcessorTest do
              "updated_at" => "2023-10-11 18:27:00",
              "image_path" => nil,
              "tags" => ["PS5", "PS+ Extra", "WTF"],
-             "title" => "Returnal (PS5)"
+             "title" => "Returnal (PS5)",
+             "subtitle" => nil
            }
   end
 
@@ -80,5 +82,28 @@ defmodule Tabula.AstPostProcessorTest do
     assert Floki.find(ast, "html body h1") == [
              {"h1", [], [{"span", [{"class", "list-tag"}], ["Backlog"]}, "Returnal (PS5)"]}
            ]
+  end
+
+  test ".modify_ast/3 replaces card's title and subtitle from AST" do
+    ast = [
+      {"h1", [], ["Neuromancer (1984)"]},
+      {"h2", [], ["William Gibson"]},
+      {"p", [], [{"img", [{"src", "neuromancer-1984.jpg"}, {"alt", "image"}], []}]}
+    ]
+
+    card = %Card{
+      name: "Nuromancer",
+      list: "Read",
+      board: "Books",
+      source_path: "neuromancer.md",
+      target_path: "neuromancer.html"
+    }
+
+    modify_ast(ast, card, %{})
+
+    assert %{
+             "title" => "Neuromancer (1984)",
+             "subtitle" => "William Gibson"
+           } = Storage.get(card)
   end
 end
