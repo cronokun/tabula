@@ -37,7 +37,8 @@ defmodule Tabula.Build do
         acc ->
           case Convert.convert_file(card) do
             :skipped ->
-              card_path = Enum.join([card.board, card.list, card.name], "/")
+              # FIXME: this is hardcoded; move to config?
+              [_, card_path] = String.split(card.source_path, "/priv/boards/")
               info("WARNING: Can't read file \"#{card_path}\", skipping", :warning)
               Map.update(acc, :skipped, 0, &(&1 + 1))
 
