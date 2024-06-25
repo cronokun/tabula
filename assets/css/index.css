@@ -10,14 +10,12 @@ body {
 
 h1 {
   font-weight: 600;
-  margin-top: 20px;
-  margin-block-start: 0;
+  margin-block-start: 20px;
 }
 
 h2 {
   font-weight: 400;
-  margin-top: 20px;
-  margin-block-start: 0;
+  margin-block-start: 25px;
 }
 
 section {
@@ -25,7 +23,12 @@ section {
   margin-left: 50px;
 }
 
-section > h2 + ul {
+section > h2 + a {
+  display: block;
+  margin-bottom: 10px;
+}
+
+section > h2 ~ ul {
   list-style-type: none;
   margin-block-start: 0;
   padding-left: 0;

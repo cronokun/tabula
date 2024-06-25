@@ -72,6 +72,7 @@ defmodule Tabula.BuildIndex do
       [],
       [
         {"h2", [], [board]},
+        {"a", [{"href", board_href(board)}], ["» board"]},
         {"ul", [],
          [
            for list <- lists do
@@ -84,6 +85,9 @@ defmodule Tabula.BuildIndex do
 
   defp list_cards_counter({_name, _path, count}),
     do: {"span", [{"class", "count"}], [to_string(count)]}
+
+
+  defp board_href(board), do: Path.expand(["release/", board, "/index.html"])
 
   defp list_href({name, path, _count}), do: {"a", [{"href", path}], [name]}
 
