@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Build do
+defmodule Mix.Tasks.Build.Board do
   @moduledoc """
   Build website for the specified board.
 

@@ -12,6 +12,7 @@ defmodule Mix.Tasks.Build.Index do
 
   @impl Mix.Task
   def run(_) do
+    Mix.shell().info("Building index page")
     Tabula.BuildIndex.run()
   end
 end
