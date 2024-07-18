@@ -99,7 +99,7 @@ defmodule Tabula.IndexPageRenderer do
     if is_same_year do
       Calendar.strftime(date, "%b %d")
     else
-      Calendar.strftime(date, "%b %d, %y")
+      Calendar.strftime(date, "%b %d, %Y")
     end
   end
 
