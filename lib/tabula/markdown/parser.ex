@@ -1,7 +1,5 @@
 defmodule Tabula.Markdown.Parser do
-  @moduledoc """
-  Parse Markdown, process and convert to HTML.
-  """
+  @moduledoc "Parse markdown file with special syntax (like checklists and description lists)."
 
   def parse(content) when is_binary(content) do
     content

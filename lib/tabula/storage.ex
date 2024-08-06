@@ -6,20 +6,29 @@ defmodule Tabula.Storage do
   and then retrieve that data when generating board's index page.
   """
 
-  alias Tabula.Board.Card
-
   @table :tabula_cards
 
   def init, do: :ets.new(@table, [:named_table])
 
-  def get(card) when is_struct(card, Card) do
-    case :ets.lookup(@table, {card.board, card.name}) do
+  def get(card_id) do
+    case :ets.lookup(@table, card_id) do
       [] -> nil
       [{_key, data}] -> data
     end
   end
 
-  def put(card, data) when is_struct(card, Card) do
-    :ets.insert(@table, {{card.board, card.name}, data})
+  def put(card, data) do
+    card =
+      Map.merge(card, %{
+        created_at: data["created_at"],
+        updated_at: data["updated_at"],
+        tags: data["tags"],
+        title: data["title"],
+        subtitle: data["subtitle"],
+        image_path: data["image_path"],
+        exists: true
+      })
+
+    :ets.insert(@table, {card.id, card})
   end
 end

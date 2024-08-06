@@ -18,30 +18,34 @@ defmodule Mix.Tasks.Build.Board do
 
   use Mix.Task
 
+  @options [verbose: :boolean]
+
   @impl Mix.Task
   def run(opts) do
     Tabula.Storage.init()
 
-    opts = parse_options(opts)
+    case OptionParser.parse!(opts, strict: @options) do
+      {opts, [dir | _]} ->
+        Tabula.Builder.run(dir, set_defaults(opts))
 
-    case opts do
-      %{path: path} -> Tabula.Build.run(path, opts)
-      _ -> for path <- all_boards(), do: Tabula.Build.run(path, opts)
+      {opts, []} ->
+        opts = set_defaults(opts)
+
+        for dir <- list_all_boards() do
+          Tabula.Builder.run(dir, opts)
+        end
     end
 
-    IO.puts("\nDONE!")
+    Mix.shell().info("\nDONE!")
   end
 
-  defp all_boards do
+  defp list_all_boards do
     File.ls!("priv/boards/")
     |> Enum.map(&"priv/boards/#{&1}")
     |> Enum.filter(&File.dir?/1)
   end
 
-  defp parse_options(opts) do
-    OptionParser.parse(opts, strict: [path: :string, verbose: :boolean])
-    |> elem(0)
-    |> Keyword.put_new(:verbose, false)
-    |> Map.new()
+  defp set_defaults(opts) do
+    Keyword.put_new(opts, :verbose, false)
   end
 end

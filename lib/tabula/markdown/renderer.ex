@@ -1,7 +1,5 @@
 defmodule Tabula.Markdown.Renderer do
-  @moduledoc """
-  Render AST to HTML and wrap it in a HTML document.
-  """
+  @moduledoc "Render AST to nice-ish HTML."
 
   @default_padding %{level: 0, pad: "    ", inline: false}
 

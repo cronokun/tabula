@@ -67,6 +67,11 @@ body li.card img.cover {
   height: 300px;
 }
 
+body.shopping li.card img.cover {
+  min-width: 200px;
+  object-fit: contain;
+}
+
 body.videogames li.card img.cover {
   height: 200px;
 }

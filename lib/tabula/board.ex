@@ -1,42 +1,44 @@
-defmodule Tabula.Board.Card do
-  @enforce_keys [:board, :name, :list, :source_path, :target_path]
-  defstruct [:board, :name, :subtitle, :list, :source_path, :target_path]
-end
-
-defmodule Tabula.Board.List do
-  @enforce_keys [:name]
-  defstruct name: nil, path: nil, cards: []
-end
-
 defmodule Tabula.Board do
-  @enforce_keys [:name, :dir, :index_path, :lists]
-  defstruct name: nil, dir: nil, index_path: nil, lists: []
+  @moduledoc "Representation of an board: list of cards."
 
-  # FIXME: this is duplicated; move to config!
-  @release_dir Path.expand("release")
+  def build(dir) do
+    data = read_yaml(dir)
+    board_name = data["board"]
+    board_path = data["path"] || safe_path(board_name)
+    board_img_dir = Path.join(["/assets/images/", board_path])
 
-  def build(data, dir) do
-    %__MODULE__{
-      name: data["board"],
-      dir: dir,
-      index_path: Path.join([@release_dir, data["board"], "index.html"]),
+    %{
+      title: board_name,
+      base_path: board_path,
+      assets_source_path: Path.join([dir, "_images"]),
+      assets_target_path: Path.join(["./release/", board_img_dir]),
+      index_page_path: Path.join(["./release/", board_path, "index.html"]),
       lists:
         for list <- List.wrap(data["lists"]) do
           list_path = list["path"] || safe_path(list["name"])
 
-          %Tabula.Board.List{
+          %{
             name: list["name"],
-            path: list_path,
+            base_path: list_path,
+            target_path: Path.join(["./release/", board_path, list_path]),
             cards:
-              for card <- List.wrap(list["cards"]) do
-                path = Path.join([list_path, safe_path(card)])
+              for card_name <- List.wrap(list["cards"]) do
+                source = Path.join([dir, list_path, card_name <> ".md"])
+                link = Path.join(["/", board_path, list_path, safe_path(card_name) <> ".html"])
+                target = Path.join(["./release/", link])
 
-                %Tabula.Board.Card{
-                  name: card,
-                  list: list["name"],
-                  board: data["board"],
-                  source_path: Path.expand("#{dir}/#{path}.md"),
-                  target_path: Path.expand("#{@release_dir}/#{data["board"]}/#{path}.html")
+                %{
+                  id: {board_name, card_name},
+                  title: card_name,
+                  subtitle: nil,
+                  source_path: source,
+                  target_path: target,
+                  link_path: link,
+                  image_path: nil,
+                  image_base_dir: board_img_dir,
+                  list_name: list["name"],
+                  tags: [],
+                  exists: false
                 }
               end
           }
@@ -44,7 +46,22 @@ defmodule Tabula.Board do
     }
   end
 
-  defp safe_path(name) when is_binary(name) do
-    name |> String.replace([":"], "") |> String.replace("/", " - ")
+  defp read_yaml(board_dir) do
+    yml_path = Path.join([board_dir, "_items.yml"])
+
+    with {:ok, yml} <- File.read(yml_path),
+         {:ok, data} <- YamlElixir.read_from_string(yml) do
+      data
+    end
+  end
+
+  @ignore_chars [":", ",", "."]
+  @replace_chars [" • ", " - ", " "]
+
+  defp safe_path(path) do
+    path
+    |> String.replace(@ignore_chars, "")
+    |> String.replace(@replace_chars, "-")
+    |> String.downcase()
   end
 end
