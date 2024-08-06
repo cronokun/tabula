@@ -14,10 +14,18 @@ mix build
 to build all boards, or
 
 ```
-mix build --path priv/boards/board_name/
+mix build.board priv/boards/board_name/
 ```
 
 to build specific board.
+
+Then run HTTP server with
+
+```
+mix run -e "Tabula.Web.Server.run()"
+```
+
+and go to index page `http://localhost/boards.html` or specific board `http://localhost/movies/index.html`.
 
 
 ## MVP Description

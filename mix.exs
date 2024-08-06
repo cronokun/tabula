@@ -25,7 +25,8 @@ defmodule Tabula.MixProject do
       {:jason, "~> 1.4"},
       {:earmark_parser, "~> 1.4"},
       {:floki, "~> 0.36.2"},
-      {:yaml_elixir, "~> 2.9"}
+      {:yaml_elixir, "~> 2.9"},
+      {:plug_cowboy, "~> 2.0"}
     ]
   end
 
