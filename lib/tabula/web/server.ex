@@ -11,6 +11,7 @@ defmodule Tabula.Web.Server do
 
   post "/rebuild" do
     Mix.Tasks.Build.Board.run([])
+    Mix.Tasks.Build.Index.run([])
     send_resp(conn, 200, "OK")
   end
 

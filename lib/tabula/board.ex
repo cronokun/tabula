@@ -58,7 +58,7 @@ defmodule Tabula.Board do
   @ignore_chars [":", ",", "."]
   @replace_chars [" • ", " - ", " "]
 
-  defp safe_path(path) do
+  def safe_path(path) do
     path
     |> String.replace(@ignore_chars, "")
     |> String.replace(@replace_chars, "-")

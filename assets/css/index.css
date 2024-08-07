@@ -4,8 +4,11 @@ html {
 }
 
 body {
-  display: flex;
   margin: 5px 5px 5px 25px;
+}
+
+main {
+  display: flex;
 }
 
 h1 {
@@ -20,7 +23,8 @@ h2 {
 
 section {
   flex: 0 0 content;
-  margin-left: 50px;
+  margin-left: 2px;
+  margin-right: 48px;
 }
 
 section > h2 + a {
