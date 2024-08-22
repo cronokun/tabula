@@ -10,6 +10,7 @@ defmodule Tabula.Board do
     %{
       title: board_name,
       base_path: board_path,
+      target_dir: Path.join(["./release/", board_path]),
       assets_source_path: Path.join([dir, "_images"]),
       assets_target_path: Path.join(["./release/", board_img_dir]),
       index_page_path: Path.join(["./release/", board_path, "index.html"]),

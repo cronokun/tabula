@@ -17,8 +17,8 @@ defmodule Tabula.Builder do
 
   defp copy_assets!(board) do
     copy_global_assets!()
-    File.rm_rf!(board.base_path)
-    File.mkdir_p!(board.base_path)
+    File.rm_rf!(board.target_dir)
+    File.mkdir_p!(board.target_dir)
     File.rm_rf!(board.assets_target_path)
     File.mkdir_p!(board.assets_target_path)
     File.cp_r!(board.assets_source_path, board.assets_target_path)
