@@ -20,8 +20,6 @@ defmodule Mix.Tasks.Build.Board do
 
   @requirements ["app.start"]
 
-  # FIXME: move to config
-  @boards_dir "/Users/cronokun/Documents/Boards/"
   @options [verbose: :boolean]
 
   @impl Mix.Task
@@ -40,6 +38,8 @@ defmodule Mix.Tasks.Build.Board do
 
     Mix.shell().info("\nDONE!")
   end
+
+  @boards_dir Application.compile_env(:tabula, :base_boards_dir)
 
   defp list_all_boards do
     @boards_dir

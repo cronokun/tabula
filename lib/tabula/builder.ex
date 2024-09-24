@@ -7,30 +7,31 @@ defmodule Tabula.Builder do
 
   alias Tabula.{Board, BoardIndex, Card}
 
+  @release_dir Application.compile_env(:tabula, :release_dir)
+
   def run(dir, _opts \\ []) do
     Logger.info("Building board '#{Path.basename(dir)}'")
     board = Board.build(dir)
     copy_assets!(board)
     convert_cards(board)
     create_board_index_page(board)
-
     :ok
   end
 
   defp copy_assets!(board) do
-    copy_global_assets!()
+    css_dir_path = Path.join([@release_dir, "/assets/css/"])
+    images_dir_path = Path.join([@release_dir, "/assets/images/"])
+
+    File.mkdir_p!(css_dir_path)
+    File.mkdir_p!(images_dir_path)
+    File.cp_r!("./assets/css/", css_dir_path)
+    File.cp_r!("./assets/images/", images_dir_path)
+
     File.rm_rf!(board.target_dir)
     File.mkdir_p!(board.target_dir)
     File.rm_rf!(board.assets_target_path)
     File.mkdir_p!(board.assets_target_path)
     File.cp_r!(board.assets_source_path, board.assets_target_path)
-  end
-
-  defp copy_global_assets! do
-    File.mkdir_p!("./release/assets/css/")
-    File.mkdir_p!("./release/assets/images/")
-    File.cp_r!("./assets/css/", "./release/assets/css/")
-    File.cp_r!("./assets/images/", "./release/assets/images/")
   end
 
   defp convert_cards(board) do

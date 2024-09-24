@@ -1,6 +1,8 @@
 defmodule Tabula.Board do
   @moduledoc "Representation of an board: list of cards."
 
+  @release_dir Application.compile_env(:tabula, :release_dir)
+
   def build(dir) do
     data = read_yaml(dir)
     board_name = data["board"]
@@ -10,10 +12,10 @@ defmodule Tabula.Board do
     %{
       title: board_name,
       base_path: board_path,
-      target_dir: Path.join(["./release/", board_path]),
-      assets_source_path: Path.join([dir, "_images"]),
-      assets_target_path: Path.join(["./release/", board_img_dir]),
-      index_page_path: Path.join(["./release/", board_path, "index.html"]),
+      target_dir: Path.join([@release_dir, board_path]),
+      assets_source_path: Path.join([dir, "_images/"]),
+      assets_target_path: Path.join([@release_dir, board_img_dir]),
+      index_page_path: Path.join([@release_dir, board_path, "index.html"]),
       lists:
         for list <- List.wrap(data["lists"]) do
           list_path = list["path"] || safe_path(list["name"])
@@ -21,12 +23,12 @@ defmodule Tabula.Board do
           %{
             name: list["name"],
             base_path: list_path,
-            target_path: Path.join(["./release/", board_path, list_path]),
+            target_path: Path.join([@release_dir, board_path, list_path]),
             cards:
               for card_name <- List.wrap(list["cards"]) do
                 source = Path.join([dir, list_path, card_name <> ".md"])
                 link = Path.join(["/", board_path, list_path, safe_path(card_name) <> ".html"])
-                target = Path.join(["./release/", link])
+                target = Path.join([@release_dir, link])
 
                 %{
                   id: {board_name, card_name},

@@ -4,7 +4,8 @@ defmodule Tabula.GlobalIndex do
   alias Tabula.Board
   alias Tabula.Markdown.Renderer
 
-  @boards_dir "/Users/cronokun/Documents/Boards/"
+  @boards_dir Application.compile_env(:tabula, :base_boards_dir)
+  @release_dir Application.compile_env(:tabula, :release_dir)
 
   def create do
     copy_global_assets!()
@@ -14,10 +15,12 @@ defmodule Tabula.GlobalIndex do
       |> generate_ast()
       |> Renderer.to_html()
 
-    File.write!("./release/index.html", html)
+    File.write!(Path.join([@release_dir, "index.html"]), html)
   end
 
-  defp copy_global_assets!, do: File.cp!("assets/css/index.css", "./release/assets/css/index.css")
+  defp copy_global_assets! do
+    File.cp!("assets/css/index.css", Path.join([@release_dir, "/assets/css/index.css"]))
+  end
 
   defp get_boards_data do
     for board_file <- Path.wildcard(@boards_dir <> "*/_items.yml") do
