@@ -3,10 +3,12 @@ defmodule Tabula.Builder do
   Build the "board": convert MD files to HTML, create `index.html`, copy assets, etc.
   """
 
+  require Logger
+
   alias Tabula.{Board, BoardIndex, Card}
 
   def run(dir, _opts \\ []) do
-    Mix.shell().info("Building board '#{Path.basename(dir)}'")
+    Logger.info("Building board '#{Path.basename(dir)}'")
     board = Board.build(dir)
     copy_assets!(board)
     convert_cards(board)

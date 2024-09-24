@@ -4,6 +4,8 @@ defmodule Tabula.GlobalIndex do
   alias Tabula.Board
   alias Tabula.Markdown.Renderer
 
+  @boards_dir "/Users/cronokun/Documents/Boards/"
+
   def create do
     copy_global_assets!()
 
@@ -18,7 +20,7 @@ defmodule Tabula.GlobalIndex do
   defp copy_global_assets!, do: File.cp!("assets/css/index.css", "./release/assets/css/index.css")
 
   defp get_boards_data do
-    for board_file <- Path.wildcard("priv/boards/*/_items.yml") do
+    for board_file <- Path.wildcard(@boards_dir <> "*/_items.yml") do
       with {:ok, yml} <- File.read(board_file),
            {:ok, data} <- YamlElixir.read_from_string(yml) do
         lists =

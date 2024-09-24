@@ -8,6 +8,8 @@ defmodule Mix.Tasks.Build.Index do
 
   use Mix.Task
 
+  @requirements ["app.start"]
+
   @shortdoc "Build global index page"
 
   @impl Mix.Task

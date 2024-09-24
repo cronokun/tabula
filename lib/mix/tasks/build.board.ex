@@ -18,6 +18,10 @@ defmodule Mix.Tasks.Build.Board do
 
   use Mix.Task
 
+  @requirements ["app.start"]
+
+  # FIXME: move to config
+  @boards_dir "/Users/cronokun/Documents/Boards/"
   @options [verbose: :boolean]
 
   @impl Mix.Task
@@ -38,9 +42,17 @@ defmodule Mix.Tasks.Build.Board do
   end
 
   defp list_all_boards do
-    File.ls!("priv/boards/")
-    |> Enum.map(&"priv/boards/#{&1}")
-    |> Enum.filter(&File.dir?/1)
+    @boards_dir
+    |> File.ls!()
+    |> Enum.reduce([], fn fname, acc ->
+      fpath = Path.join([@boards_dir, fname])
+
+      if not String.starts_with?(fname, ".") and File.dir?(fpath) do
+        [fpath | acc]
+      else
+        acc
+      end
+    end)
   end
 
   defp set_defaults(opts) do
