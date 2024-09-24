@@ -19,13 +19,21 @@ mix build.board priv/boards/board_name/
 
 to build specific board.
 
-Then run HTTP server with
+### Build and Run
+
+First build an OTP release:
 
 ```
-mix run -e "Tabula.Web.Server.run()"
+mix release
 ```
 
-and go to index page `http://localhost/boards.html` or specific board `http://localhost/movies/index.html`.
+Then run the app with:
+
+```
+_build/dev/rel/tabula/bin/tabula daemon
+```
+
+and go to index page `http://localhost/index.html` or specific board `http://localhost/movies/index.html`.
 
 
 ## MVP Description
