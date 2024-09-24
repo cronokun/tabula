@@ -15,7 +15,8 @@ defmodule Tabula.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger, :inets]
+      extra_applications: [:logger, :inets],
+      mod: {Tabula.Application, []}
     ]
   end
 
@@ -26,7 +27,8 @@ defmodule Tabula.MixProject do
       {:earmark_parser, "~> 1.4"},
       {:floki, "~> 0.36.2"},
       {:yaml_elixir, "~> 2.9"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:file_system, "~> 1.0"}
     ]
   end
 

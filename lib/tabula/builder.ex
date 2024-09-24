@@ -5,7 +5,7 @@ defmodule Tabula.Builder do
 
   alias Tabula.{Board, BoardIndex, Card}
 
-  def run(dir, _opts) do
+  def run(dir, _opts \\ []) do
     Mix.shell().info("Building board '#{Path.basename(dir)}'")
     board = Board.build(dir)
     copy_assets!(board)

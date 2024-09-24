@@ -22,8 +22,6 @@ defmodule Mix.Tasks.Build.Board do
 
   @impl Mix.Task
   def run(opts) do
-    Tabula.Storage.init()
-
     case OptionParser.parse!(opts, strict: @options) do
       {opts, [dir | _]} ->
         Tabula.Builder.run(dir, set_defaults(opts))
