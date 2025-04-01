@@ -3,7 +3,7 @@ defmodule Tabula.Watcher do
 
   use GenServer
 
-  @dirs ["/Users/cronokun/Documents/Boards/"]
+  @dirs [Application.compile_env(:tabula, :base_boards_dir)]
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, nil)
@@ -26,8 +26,9 @@ defmodule Tabula.Watcher do
     if String.ends_with?(path, "_items.yml") and :created in events do
       board_path = Path.expand("..", path)
       Tabula.Builder.run(board_path)
-      Tabula.GlobalIndex.create()
     end
+
+    Tabula.GlobalIndex.create()
 
     {:noreply, state}
   end
