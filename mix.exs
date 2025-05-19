@@ -4,7 +4,7 @@ defmodule Tabula.MixProject do
   def project do
     [
       app: :tabula,
-      version: "0.5.2",
+      version: "0.6.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),

@@ -7,6 +7,8 @@ defmodule Tabula.Markdown.PostProcessor do
   3. Expand image path.
   """
 
+  import Tabula.Utils, only: [open_in_mvim: 1]
+
   def modify_ast(ast, context) do
     ast
     |> into_html_layout(context)
@@ -37,7 +39,7 @@ defmodule Tabula.Markdown.PostProcessor do
     tag1 = {"span", [{"class", "list-tag"}], [name]}
 
     tag2 =
-      {"a", [{"href", "mvim://open?url=file://#{source}"}, {"class", "edit-btn"}], ["Edit card"]}
+      {"a", [{"href", open_in_mvim(source)}, {"class", "edit-btn"}], ["Edit card"]}
 
     Floki.traverse_and_update(ast, fn
       {"h1", attrs, [inner]} ->

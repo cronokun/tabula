@@ -27,4 +27,8 @@ defmodule Tabula.Utils do
     )
     |> elem(0)
   end
+
+  def open_in_mvim(url) do
+    "mvim://open?url=file://#{url}"
+  end
 end

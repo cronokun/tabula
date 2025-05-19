@@ -4,6 +4,8 @@ defmodule Tabula.BoardIndex do
   alias Tabula.Markdown.Renderer
   alias Tabula.Storage
 
+  import Tabula.Utils, only: [open_in_mvim: 1]
+
   def create(board) do
     html =
       board
@@ -28,7 +30,12 @@ defmodule Tabula.BoardIndex do
            ]},
           {"body", [{"class", board.base_path}],
            [
-             {"h1", [], [board.title]},
+             {"h1", [],
+              [
+                board.title,
+                {"a", [{"href", open_in_mvim(board.source_path)}, {"class", "edit-btn"}],
+                 ["Edit board"]}
+              ]},
              Enum.map(board.lists, &list_ast/1)
            ]}
         ]
