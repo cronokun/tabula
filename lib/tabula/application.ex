@@ -8,7 +8,8 @@ defmodule Tabula.Application do
     children = [
       {Tabula.Storage, nil},
       {Tabula.Watcher, nil},
-      {Tabula.Web.Server, nil}
+      {Tabula.Web.Server, nil},
+      {Tabula.Rebuild, nil}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

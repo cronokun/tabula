@@ -25,36 +25,11 @@ defmodule Mix.Tasks.Build.Board do
     Tabula.Storage.start_link([])
 
     case OptionParser.parse!(opts, strict: @options) do
-      {opts, [dir | _]} ->
-        Mix.shell().info("\n> Building board in #{dir}")
-        Tabula.Builder.run(dir, set_defaults(opts))
-
-      {opts, []} ->
-        Mix.shell().info("\n> Building all boards")
-        opts = set_defaults(opts)
-
-        for dir <- list_all_boards() do
-          Tabula.Builder.run(dir, opts)
-        end
+      {opts, [dir | _]} -> Tabula.Builder.run(dir, set_defaults(opts))
+      {opts, []} -> Tabula.Rebuild.run(set_defaults(opts))
     end
 
     Mix.shell().info("> Done")
-  end
-
-  @boards_dir Application.compile_env(:tabula, :base_boards_dir)
-
-  defp list_all_boards do
-    @boards_dir
-    |> File.ls!()
-    |> Enum.reduce([], fn fname, acc ->
-      fpath = Path.join([@boards_dir, fname])
-
-      if not String.starts_with?(fname, ".") and File.dir?(fpath) do
-        [fpath | acc]
-      else
-        acc
-      end
-    end)
   end
 
   defp set_defaults(opts) do

@@ -16,4 +16,15 @@ defmodule Tabula.Utils do
       Calendar.strftime(due_date, "%b %d, %Y")
     end
   end
+
+  def list_dirs(dir) do
+    System.cmd(
+      "fd",
+      ["-a", "--type", "directory", "-d", "1"],
+      cd: dir,
+      into: [],
+      lines: 1024
+    )
+    |> elem(0)
+  end
 end
