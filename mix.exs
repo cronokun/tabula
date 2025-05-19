@@ -24,10 +24,10 @@ defmodule Tabula.MixProject do
   defp deps do
     [
       {:earmark_parser, "~> 1.4"},
-      {:floki, "~> 0.36.2"},
-      {:yaml_elixir, "~> 2.9"},
-      {:plug_cowboy, "~> 2.0"},
-      {:file_system, "~> 1.0"}
+      {:floki, "~> 0.37"},
+      {:yaml_elixir, "~> 2.11"},
+      {:plug_cowboy, "~> 2.7"},
+      {:file_system, "~> 1.1"}
     ]
   end
 
