@@ -10,7 +10,7 @@ defmodule Tabula.Markdown.PostProcessor do
   def modify_ast(ast, context) do
     ast
     |> into_html_layout(context)
-    |> insert_list_name(context)
+    |> insert_pre_header(context)
     |> insert_tags(context)
     |> expand_image_src(context)
   end
@@ -33,12 +33,21 @@ defmodule Tabula.Markdown.PostProcessor do
     ]
   end
 
-  defp insert_list_name(ast, %{"list_name" => name}) do
-    tag = {"span", [{"class", "list-tag"}], [name]}
+  defp insert_pre_header(ast, %{"list_name" => name, "source" => source}) do
+    tag1 = {"span", [{"class", "list-tag"}], [name]}
+
+    tag2 =
+      {"a", [{"href", "mvim://open?url=file://#{source}"}, {"class", "edit-btn"}], ["Edit card"]}
 
     Floki.traverse_and_update(ast, fn
-      {"h1", attrs, [inner]} -> {"h1", attrs, [tag, inner]}
-      other -> other
+      {"h1", attrs, [inner]} ->
+        [
+          {"div", [{"class", "pre-header"}], [tag1, tag2]},
+          {"h1", attrs, [inner]}
+        ]
+
+      other ->
+        other
     end)
   end
 

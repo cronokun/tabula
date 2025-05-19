@@ -35,6 +35,7 @@ defmodule Tabula.Card do
   defp process_context(context, card, ast) do
     context
     |> Map.put("list_name", card.list_name)
+    |> Map.put("source", card.source_path)
     |> process_tags()
     |> set_title_from_header(ast)
     |> set_image_path(ast, card)
