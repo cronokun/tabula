@@ -18,17 +18,19 @@ defmodule Mix.Tasks.Build.Board do
 
   use Mix.Task
 
-  @requirements ["app.start"]
-
   @options [verbose: :boolean]
 
   @impl Mix.Task
   def run(opts) do
+    Tabula.Storage.start_link([])
+
     case OptionParser.parse!(opts, strict: @options) do
       {opts, [dir | _]} ->
+        Mix.shell().info("\n> Building board in #{dir}")
         Tabula.Builder.run(dir, set_defaults(opts))
 
       {opts, []} ->
+        Mix.shell().info("\n> Building all boards")
         opts = set_defaults(opts)
 
         for dir <- list_all_boards() do
@@ -36,7 +38,7 @@ defmodule Mix.Tasks.Build.Board do
         end
     end
 
-    Mix.shell().info("\nDONE!")
+    Mix.shell().info("> Done")
   end
 
   @boards_dir Application.compile_env(:tabula, :base_boards_dir)

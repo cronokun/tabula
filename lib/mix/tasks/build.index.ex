@@ -6,15 +6,14 @@ defmodule Mix.Tasks.Build.Index do
   board lists and number of cards in each list.
   """
 
-  use Mix.Task
-
-  @requirements ["app.start"]
-
   @shortdoc "Build global index page"
+
+  use Mix.Task
 
   @impl Mix.Task
   def run(_) do
-    Mix.shell().info("Creating global index page")
+    Mix.shell().info("\n> Buiding global index page...")
     Tabula.GlobalIndex.create()
+    Mix.shell().info("> Done")
   end
 end
