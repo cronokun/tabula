@@ -2,6 +2,7 @@ defmodule Tabula.Web.Server do
   @moduledoc "Run simple HTTP server to serve static files for boards and cards."
 
   @release_dir Application.compile_env(:tabula, :release_dir)
+  @port Application.compile_env(:tabula, :web_server_port)
 
   use Plug.Router
 
@@ -16,7 +17,7 @@ defmodule Tabula.Web.Server do
     Plug.Cowboy.child_spec(
       plug: __MODULE__,
       scheme: :http,
-      options: [port: 80]
+      options: [port: @port]
     )
   end
 end

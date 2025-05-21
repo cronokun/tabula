@@ -1,7 +1,5 @@
 import Config
 
-boards_dir = System.get_env("TABULA_BOARDS_DIR", "./priv/boards/")
-release_dir = System.get_env("TABULA_RELEASE_DIR", "./release/")
+import_config "#{config_env()}.exs"
 
-config :tabula, :base_boards_dir, boards_dir
-config :tabula, :release_dir, release_dir
+config :tabula, :environment, Mix.env()
