@@ -38,6 +38,7 @@ defmodule Tabula.Card do
     |> Map.put("board_name", card.board_name)
     |> Map.put("list_name", card.list_name)
     |> Map.put("source", card.source_path)
+    |> Map.put("id", card.id)
     |> process_tags()
     |> set_title_from_header(ast)
     |> set_image_path(ast, card)

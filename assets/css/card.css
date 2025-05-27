@@ -98,3 +98,6 @@ ul.checklist {
   letter-spacing: 0.25px;
   padding: 4px 5px;
 }
+
+a.card-link { text-decoration: none; }
+a.card-link.current-card { font-weight: 600; }

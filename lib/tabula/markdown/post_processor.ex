@@ -77,15 +77,23 @@ defmodule Tabula.Markdown.PostProcessor do
     end)
   end
 
-  defp expand_links(ast, %{"board_name" => board}) do
+  defp expand_links(ast, %{"board_name" => board, "id" => card_id}) do
     Floki.traverse_and_update(ast, fn
       {"a", attrs, contents} ->
         href = List.keyfind(attrs, "href", 0) |> snd()
 
         case maybe_get_card(href, board) do
           {:ok, card} ->
-            new_attrs = List.keyreplace(attrs, "href", 0, {"href", card.link_path})
-            {"a", new_attrs, contents}
+            attrs = List.keyreplace(attrs, "href", 0, {"href", card.link_path})
+
+            attrs =
+              if card.id == card_id do
+                [{"class", "card-link current-card"} | attrs]
+              else
+                [{"class", "card-link"} | attrs]
+              end
+
+            {"a", attrs, contents}
 
           :nocard ->
             {"span", [], contents}
