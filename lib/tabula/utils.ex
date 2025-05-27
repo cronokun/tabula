@@ -31,4 +31,7 @@ defmodule Tabula.Utils do
   def open_in_mvim(url) do
     "mvim://open?url=file://#{url}"
   end
+
+  def fst(t) when is_tuple(t), do: elem(t, 0)
+  def snd(t) when is_tuple(t), do: elem(t, 1)
 end

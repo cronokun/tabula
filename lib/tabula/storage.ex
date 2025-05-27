@@ -11,7 +11,8 @@ defmodule Tabula.Storage do
   @table :tabula_cards
 
   def get(card_id), do: GenServer.call(__MODULE__, {:get, card_id})
-  def put(card, data), do: GenServer.call(__MODULE__, {:put, card, data})
+  def put(card), do: GenServer.call(__MODULE__, {:put, card})
+  def update(card, data), do: GenServer.call(__MODULE__, {:update, card, data})
 
   def start_link(_args) do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
@@ -35,7 +36,14 @@ defmodule Tabula.Storage do
   end
 
   @impl true
-  def handle_call({:put, card, data}, _from, state) do
+  def handle_call({:put, card}, _from, state) do
+    :ets.insert(@table, {card.id, card})
+
+    {:reply, :ok, state}
+  end
+
+  @impl true
+  def handle_call({:update, card, data}, _from, state) do
     card =
       Map.merge(card, %{
         created_at: data["created_at"],

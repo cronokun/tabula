@@ -1,8 +1,9 @@
 defmodule Tabula.Board do
   @moduledoc "Representation of an board: list of cards."
 
-  @release_dir Application.compile_env(:tabula, :release_dir)
+  alias Tabula.Storage
 
+  @release_dir Application.compile_env(:tabula, :release_dir)
   def build(dir) do
     data = read_yaml(dir)
     board_name = data["board"]
@@ -40,10 +41,12 @@ defmodule Tabula.Board do
                   link_path: link,
                   image_path: nil,
                   image_base_dir: board_img_dir,
+                  board_name: board_name,
                   list_name: list["name"],
                   tags: [],
                   exists: false
                 }
+                |> tap(&Storage.put(&1))
               end
           }
         end

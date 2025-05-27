@@ -7,14 +7,17 @@ defmodule Tabula.Markdown.PostProcessor do
   3. Expand image path.
   """
 
-  import Tabula.Utils, only: [open_in_mvim: 1]
+  alias Tabula.Storage
+
+  import Tabula.Utils, only: [open_in_mvim: 1, snd: 1]
 
   def modify_ast(ast, context) do
     ast
     |> into_html_layout(context)
+    |> expand_image_src(context)
+    |> expand_links(context)
     |> insert_pre_header(context)
     |> insert_tags(context)
-    |> expand_image_src(context)
   end
 
   # ---- AST manipulation ----
@@ -72,5 +75,44 @@ defmodule Tabula.Markdown.PostProcessor do
       attrs = List.keyreplace(attrs, "src", 0, {"src", img})
       {"img", attrs}
     end)
+  end
+
+  defp expand_links(ast, %{"board_name" => board}) do
+    Floki.traverse_and_update(ast, fn
+      {"a", attrs, contents} ->
+        href = List.keyfind(attrs, "href", 0) |> snd()
+
+        case maybe_get_card(href, board) do
+          {:ok, card} ->
+            new_attrs = List.keyreplace(attrs, "href", 0, {"href", card.link_path})
+            {"a", new_attrs, contents}
+
+          :nocard ->
+            {"span", [], contents}
+
+          :external ->
+            {"a", attrs, contents}
+        end
+
+      other ->
+        other
+    end)
+  end
+
+  def maybe_get_card(href, board) do
+    card_id = {board, String.trim_trailing(href, ".md")}
+
+    if card_href?(href) do
+      case Storage.get(card_id) do
+        nil -> :nocard
+        data -> {:ok, data}
+      end
+    else
+      :external
+    end
+  end
+
+  defp card_href?(href) do
+    String.ends_with?(href, ".md") && is_nil(URI.parse(href).scheme)
   end
 end

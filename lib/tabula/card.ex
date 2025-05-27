@@ -11,7 +11,8 @@ defmodule Tabula.Card do
         ast = Parser.parse(markdown)
         context = process_context(context, card, ast)
 
-        PostProcessor.modify_ast(ast, context)
+        ast
+        |> PostProcessor.modify_ast(context)
         |> Renderer.to_html()
 
       {:error, _} ->
@@ -34,12 +35,13 @@ defmodule Tabula.Card do
 
   defp process_context(context, card, ast) do
     context
+    |> Map.put("board_name", card.board_name)
     |> Map.put("list_name", card.list_name)
     |> Map.put("source", card.source_path)
     |> process_tags()
     |> set_title_from_header(ast)
     |> set_image_path(ast, card)
-    |> tap(&Storage.put(card, &1))
+    |> tap(&Storage.update(card, &1))
   end
 
   defp process_tags(context) do
