@@ -17,6 +17,7 @@ defmodule Tabula.Rebuild do
     Logger.info("Building all boards in #{@boards_dir}")
     for board <- list_dirs(@boards_dir), do: Tabula.Builder.run(board, opts)
     Tabula.GlobalIndex.create()
+    Tabula.Assets.build()
     :ok
   end
 end
