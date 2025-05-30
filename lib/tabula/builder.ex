@@ -19,13 +19,16 @@ defmodule Tabula.Builder do
   end
 
   defp copy_assets!(board) do
-    css_dir_path = Path.join([@release_dir, "/assets/css/"])
-    images_dir_path = Path.join([@release_dir, "/assets/images/"])
+    priv_dir = :code.priv_dir(:tabula)
+    source_css_dir = Path.join(priv_dir, "/static/assets/css/")
+    source_img_dir = Path.join(priv_dir, "/static/assets/images/")
+    target_css_dir = Path.join(@release_dir, "/assets/css/")
+    target_img_dir = Path.join(@release_dir, "/assets/images/")
 
-    File.mkdir_p!(css_dir_path)
-    File.mkdir_p!(images_dir_path)
-    File.cp_r!("./assets/css/", css_dir_path)
-    File.cp_r!("./assets/images/", images_dir_path)
+    File.mkdir_p!(target_css_dir)
+    File.mkdir_p!(target_img_dir)
+    File.cp_r!(source_css_dir, target_css_dir)
+    File.cp_r!(source_img_dir, target_img_dir)
 
     File.rm_rf!(board.target_dir)
     File.mkdir_p!(board.target_dir)

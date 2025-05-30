@@ -23,6 +23,15 @@ defmodule Tabula.Application do
     ]
   end
 
+  defp children(:dev) do
+    [
+      {Tabula.Storage, nil},
+      {Tabula.Watcher, nil},
+      {Tabula.Web.Server, nil},
+      {Tabula.Rebuild, nil}
+    ]
+  end
+
   defp children(_) do
     [
       {Tabula.Storage, nil},

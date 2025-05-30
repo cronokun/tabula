@@ -4,11 +4,12 @@ defmodule Tabula.MixProject do
   def project do
     [
       app: :tabula,
-      version: "0.6.3",
+      version: "0.6.4",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      releases: releases()
     ]
   end
 
@@ -35,5 +36,28 @@ defmodule Tabula.MixProject do
     [
       build: ["build.board", "build.index"]
     ]
+  end
+
+  defp releases do
+    [
+      prod: [
+        steps: [&copy_extra_files/1, :assemble]
+      ],
+      dev: [
+        steps: [&copy_extra_files/1, :assemble]
+      ]
+    ]
+  end
+
+  defp copy_extra_files(rel) do
+    IO.puts("Copying assets files")
+    priv_dir = :code.priv_dir(:tabula)
+    css_dir = Path.join(priv_dir, "/static/assets/css/")
+    img_dir = Path.join(priv_dir, "/static/assets/images/")
+    File.mkdir_p!(css_dir)
+    File.mkdir_p!(img_dir)
+    File.cp_r!("./assets/css/", css_dir)
+    File.cp_r!("./assets/images/", img_dir)
+    rel
   end
 end

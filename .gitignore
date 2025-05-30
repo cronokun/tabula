@@ -25,9 +25,8 @@ tabula-*.tar
 # Temporary files, for example, from tests.
 /tmp/
 
-/priv/boards/
-/priv/import/
-/priv/trello/
+/priv/static/
+
 /release/
 
 /TODO.md
