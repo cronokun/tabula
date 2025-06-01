@@ -8,18 +8,12 @@ defmodule Tabula.GlobalIndex do
   @release_dir Application.compile_env(:tabula, :release_dir)
 
   def create do
-    copy_global_assets!()
-
     html =
       get_boards_data()
       |> generate_ast()
       |> Renderer.to_html()
 
     File.write!(Path.join([@release_dir, "index.html"]), html)
-  end
-
-  defp copy_global_assets! do
-    File.cp!("assets/css/index.css", Path.join([@release_dir, "/assets/css/index.css"]))
   end
 
   defp get_boards_data do
