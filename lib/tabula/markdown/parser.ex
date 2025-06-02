@@ -15,24 +15,27 @@ defmodule Tabula.Markdown.Parser do
   defp parse_ast(ast) do
     ast
     |> remove_meta()
-    |> Enum.reduce([], fn block, acc -> [parse_block(block) | acc] end)
-    |> Enum.reverse()
+    |> Enum.map(&parse_block/1)
   end
 
   defp parse_block({"ul", attrs, content}) do
-    {lis, res} =
-      Enum.reduce(content, {[], nil}, fn li, {acc, res} ->
-        {li, r} = _parse_li(li)
-        {[li | acc], res || r}
+    {lis, list_type} =
+      Enum.reduce(content, {[], nil}, fn li, {acc, _type} ->
+        {li, type} = do_parse_li(li)
+        {[li | acc], type}
       end)
 
-    attrs = if res == :checklist, do: [{"class", "checklist"} | attrs], else: attrs
+    attrs =
+      case list_type do
+        :checklist -> [{"class", "checklist"} | attrs]
+        :list -> attrs
+      end
 
     {"ul", attrs, Enum.reverse(lis)}
   end
 
   defp parse_block({"p", attrs, content} = block) do
-    case _parse_description_list(content) do
+    case maybe_parse_description_list(content) do
       {:ok, list} -> {"dl", attrs, list}
       _ -> block
     end
@@ -54,27 +57,36 @@ defmodule Tabula.Markdown.Parser do
     []
   }
 
-  defp _parse_li({"li", attrs, ["[ ] " <> content]}) when is_binary(content) do
+  defp do_parse_li({"li", attrs, ["[ ] " <> content]}) when is_binary(content) do
     {{"li", attrs, [@unchecked_checkbox, " " <> content]}, :checklist}
   end
 
-  defp _parse_li({"li", attrs, ["[x] " <> content]}) when is_binary(content) do
+  defp do_parse_li({"li", attrs, ["[x] " <> content]}) when is_binary(content) do
     {{"li", attrs, [@checked_checkbox, " " <> content]}, :checklist}
   end
 
-  defp _parse_li({"li", attrs, ["[ ] " | content]}) do
-    {{"li", attrs, [@unchecked_checkbox, content]}, :checklist}
-  end
+  defp do_parse_li({"li", attrs, content}) when is_list(content) do
+    case content do
+      ["[ ] " | rest] ->
+        {{"li", attrs, [@unchecked_checkbox | rest]}, :checklist}
 
-  defp _parse_li({"li", attrs, ["[x] " | content]}) do
-    {{"li", attrs, [@checked_checkbox, content]}, :checklist}
-  end
+      ["[ ] " <> text | rest] ->
+        {{"li", attrs, [@unchecked_checkbox, text | rest]}, :checklist}
 
-  defp _parse_li(li), do: {li, nil}
+      ["[x] " | rest] ->
+        {{"li", attrs, [@checked_checkbox | rest]}, :checklist}
+
+      ["[x] " <> text | rest] ->
+        {{"li", attrs, [@checked_checkbox, text | rest]}, :checklist}
+
+      _ ->
+        {{"li", attrs, content}, :list}
+    end
+  end
 
   # --- Description list ---
 
-  defp _parse_description_list(content) when is_list(content) do
+  defp maybe_parse_description_list(content) when is_list(content) do
     if definition_list?(content) do
       list =
         content

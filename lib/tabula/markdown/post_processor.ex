@@ -22,7 +22,7 @@ defmodule Tabula.Markdown.PostProcessor do
 
   # ---- AST manipulation ----
 
-  defp into_html_layout(inner_ast, context) do
+  defp into_html_layout(inner_ast, %{"title" => title}) do
     [
       {"doctype", [], []},
       {"html", [{"lang", "en"}],
@@ -31,7 +31,7 @@ defmodule Tabula.Markdown.PostProcessor do
           [
             {"meta", [{"charset", "utf-8"}], []},
             {"link", [{"rel", "stylesheet"}, {"href", "/assets/css/card.css"}], []},
-            {"title", [], [context["title"]]}
+            {"title", [], [title]}
           ]},
          {"body", [], inner_ast}
        ]}
@@ -56,8 +56,8 @@ defmodule Tabula.Markdown.PostProcessor do
     end)
   end
 
-  defp insert_tags(ast, context) do
-    tags_list = for(tag <- context["tags"], do: {"span", [], [tag]})
+  defp insert_tags(ast, %{"tags" => tags}) do
+    tags_list = for(tag <- tags, do: {"span", [], [tag]})
     tags_ast = {"p", [{"class", "tags"}], tags_list}
 
     Floki.traverse_and_update(ast, fn
@@ -66,16 +66,16 @@ defmodule Tabula.Markdown.PostProcessor do
     end)
   end
 
-  @cover_image_selector "h1 ~ p img"
+  @cover_image_selector "h1 ~ p:first-of-type img"
 
-  defp expand_image_src(ast, %{"image_path" => nil}), do: ast
-
-  defp expand_image_src(ast, %{"image_path" => img}) do
+  defp expand_image_src(ast, %{"image_path" => img}) when is_binary(img) do
     Floki.find_and_update(ast, @cover_image_selector, fn {"img", attrs} ->
       attrs = List.keyreplace(attrs, "src", 0, {"src", img})
       {"img", attrs}
     end)
   end
+
+  defp expand_image_src(ast, _context), do: ast
 
   defp expand_links(ast, %{"board_name" => board, "id" => card_id}) do
     Floki.traverse_and_update(ast, fn

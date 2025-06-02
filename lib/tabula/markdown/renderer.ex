@@ -4,7 +4,9 @@ defmodule Tabula.Markdown.Renderer do
   @default_padding %{level: 0, pad: "    ", inline: false}
 
   def to_html(ast) do
-    ast_to_string(ast, @default_padding) |> String.trim_trailing()
+    ast
+    |> ast_to_string(@default_padding)
+    |> String.trim_trailing()
   end
 
   @contentless_tags ~w[area base br col command embed hr img input keygen link meta param source track wbr]
