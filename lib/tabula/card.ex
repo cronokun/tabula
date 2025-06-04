@@ -38,9 +38,9 @@ defmodule Tabula.Card do
     |> Map.put("board_name", card.board_name)
     |> Map.put("list_name", card.list_name)
     |> Map.put("source", card.source_path)
+    |> Map.put_new("title", card.title)
     |> Map.put("id", card.id)
     |> process_tags()
-    |> set_title_from_header(ast)
     |> set_image_path(ast, card)
     |> tap(&Storage.update(card, &1))
   end
@@ -61,20 +61,6 @@ defmodule Tabula.Card do
     tags = List.wrap(tags) ++ List.wrap(due_date)
 
     Map.put(context, "tags", tags)
-  end
-
-  defp set_title_from_header(context, ast) do
-    title = Floki.find(ast, "h1") |> Floki.text()
-
-    subtitle =
-      case Floki.find(ast, "h1 + h2") |> Floki.text() do
-        "" -> nil
-        subtitle -> subtitle
-      end
-
-    context
-    |> Map.put("title", title)
-    |> Map.put("subtitle", subtitle)
   end
 
   @cover_image_selector "h1 ~ p img"

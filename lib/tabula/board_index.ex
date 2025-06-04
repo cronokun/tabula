@@ -47,7 +47,7 @@ defmodule Tabula.BoardIndex do
     {"section", [],
      [
        list_header(list),
-       {"ul", [], Enum.map(list.cards, &card_ast/1)}
+       {"ul", [{"class", "cards grid"}], Enum.map(list.cards, &card_ast/1)}
      ]}
   end
 
@@ -59,7 +59,7 @@ defmodule Tabula.BoardIndex do
         n -> {"span", [{"class", "count"}], ["#{n} cards"]}
       end
 
-    {"h2", [{"id", list.base_path}], [list.name, cards_counter]}
+    [{"h2", [{"id", list.base_path}], [list.name]}, cards_counter]
   end
 
   defp card_ast(card) do
@@ -69,31 +69,39 @@ defmodule Tabula.BoardIndex do
       "li",
       [{"class", "card"}],
       [
-        card_link(card),
-        card_tags(card)
+        {"div", [{"class", "card-wrap"}],
+         [
+           card_image(card),
+           card_title(card),
+           card_tags(card)
+         ]}
       ]
     }
   end
 
-  defp card_link(card) do
-    case card.exists do
-      true ->
-        {
-          "a",
-          [{"href", card.link_path}, {"title", card.title}],
-          [
-            card_cover(card),
-            card_title(card)
-          ]
-        }
-
-      false ->
-        [
-          card_cover(card),
-          card_title(card)
-        ]
-    end
+  defp card_image(card) do
+    {"a", [{"href", card.link_path}, {"title", card.title}], [card_cover(card)]}
   end
+
+  # defp card_link(card) do
+  #   case card.exists do
+  #     true ->
+  #       {
+  #         "a",
+  #         [{"href", card.link_path}, {"title", card.title}],
+  #         [
+  #           card_cover(card),
+  #           card_title(card)
+  #         ]
+  #       }
+  #
+  #     false ->
+  #       [
+  #         card_cover(card),
+  #         card_title(card)
+  #       ]
+  #   end
+  # end
 
   defp card_cover(card) do
     {src, class} =
@@ -110,9 +118,13 @@ defmodule Tabula.BoardIndex do
   end
 
   defp card_title(card) do
-    case card.subtitle do
-      nil -> card.title
-      subtitle -> [card.title, {"span", [{"class", "subtitle"}], [subtitle]}]
+    title_tag = {"span", [{"class", "title"}], [card.title]}
+    subtitle_tag = {"span", [{"class", "subtitle"}], [card.subtitle]}
+
+    if card.subtitle do
+      [title_tag, subtitle_tag]
+    else
+      [title_tag]
     end
   end
 
