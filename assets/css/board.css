@@ -1,130 +1,125 @@
-html {
-  font-family: "Verdana", "Geneva", sans-serif;
-  font-size: 10pt;
-}
-
 body {
-  margin: 5px 5px 5px 25px;
-}
-
-h1 {
-  font-weight: 600;
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 11pt;
+  margin: 0 65px 45px 65px;
 }
 
 h2 {
-  padding-top: 20px;
   font-weight: 400;
+  margin-block-start: 32px;
+  margin-block-end: 8px;
 }
 
-h2 span.count {
-  font-family: Helvetica Neue;
-  font-size: 11px;
-  display: inline-block;
-  border: 1px solid #777777;
-  border-radius: 5px;
-  color: #555555;
-  letter-spacing: 0.25px;
-  padding: 4px 5px;
-  vertical-align: middle;
-}
-
-section > h2 + ul {
-  display: flex;
-  flex-wrap: wrap;
-  list-style-type: none;
-  padding-left: 0;
-  margin-block-start: 0;
-}
-
-li.card {
-  flex: 0 0 min-content;
-  margin-right: 15px;
-  margin-bottom: 20px;
-}
-
-li span.subtitle {
-  display: inline-block;
-  color: #505050;
-  font-weight: 600;
-  font-style: italic;
-  font-size: 9pt;
-}
-
-li a {
-  text-decoration: none;
-  color: black;
+h2 ~ span {
   display: block;
-  line-height: 1.6;
+  margin-bottom: 22px;
 }
 
-li img.cover {
+.cards {
+  padding: 0;
+}
+
+.card {
+  grid-column: span 1;
+  list-style-type: none;
+}
+
+.card .card-wrap {
+  border-radius: 4px;
+  border: 1px solid #e1e2e3;
+  box-shadow: 0 10px 10px #eeeeee;
+  padding-bottom: 8px;
+}
+
+.card span.title,
+.card span.subtitle {
+  display: block;
+  line-height: 1.25;
+  margin: 4px 12px;
+  color: #2c2c2c;
+}
+
+.card span.title {
+  font-weight: 600;
+}
+
+.card span.subtitle {
+  color: #181818;
+  margin-top: 8px;
+}
+
+.card img {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  padding-bottom: 4px;
+  height: 200px;
+  width: 100%;
+  object-fit: scale-down;
+}
+
+.card img.no-cover {
   display: block;
   margin-bottom: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid #eaebec;
 }
 
-body li.card img.cover {
+body.books img {
+  height: auto;
+  min-height: 300px;
+  object-fit: fill;
+}
+
+body.movies img,
+body.tv-series img {
   height: 300px;
+  object-fit: cover;
 }
 
-body.shopping li.card img.cover {
-  min-width: 200px;
-  object-fit: contain;
-}
-
-body.videogames li.card img.cover {
-  height: 200px;
-}
-
-li img.no-cover {
-  display: block;
-  margin-bottom: 5px;
+body.books img.no-cover,
+body.movies img.no-cover,
+body.tv-series img.no-cover {
   object-fit: scale-down;
-  background-color: #DDD;
-}
-
-body li.card img.no-cover {
-  height: 300px;
-  width: 200px;
-}
-
-body.videogames li.card img.no-cover {
-  height: 200px;
-  width: 200px;
 }
 
 .tags {
-  font-family: Helvetica Neue;
-  font-size: 11px;
-  font-weight: 500;
-  margin-block-start: 0;
+  margin-block-start: 8px;
   margin-block-end: 0;
-  margin: 4px 0 0 0;
+  margin-inline-start: 12px;
+  margin-inline-end: 12px;
 }
 
 .tags span {
+  background-color: #f1f2f3;
+  border-radius: 4px;
+  color: #6c6c6c;
   display: inline-block;
-  background-color: #e2e2e2;
-  border-radius: 5px;
-  color: #333333;
-  margin-right: 2px;
-  line-height: 12px;
-  letter-spacing: 0.25px;
-  padding: 4px 5px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  margin-right: 4px;
+  padding: 2px 4px;
+}
+
+.grid {
+  display: grid;
+  column-gap: 24px;
+  row-gap: 36px;
+  grid-template-columns: repeat(auto-fill, 200px);
 }
 
 .edit-btn {
   border: 1px solid #787878;
-  border-radius: 5px;
+  border-radius: 4px;
   color: #555555;
   text-decoration: none;
   font-weight: 200;
-  font-size: 0.5em;
+  font-size: 16px;
   margin-left: 4px;
-  padding: 4px 5px;
+  padding: 4px 8px;
   vertical-align: middle;
 }
 
 .edit-btn:hover {
-  background-color: #eaebec;
+  text-decoration: underline;
 }

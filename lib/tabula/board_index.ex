@@ -47,7 +47,7 @@ defmodule Tabula.BoardIndex do
     {"section", [],
      [
        list_header(list),
-       {"ul", [{"class", "cards grid"}], Enum.map(list.cards, &card_ast/1)}
+       {"ol", [{"class", "cards grid"}], Enum.map(list.cards, &card_ast/1)}
      ]}
   end
 
@@ -80,28 +80,12 @@ defmodule Tabula.BoardIndex do
   end
 
   defp card_image(card) do
-    {"a", [{"href", card.link_path}, {"title", card.title}], [card_cover(card)]}
+    if card.exists do
+      {"a", [{"href", card.link_path}, {"title", card.title}], [card_cover(card)]}
+    else
+      card_cover(card)
+    end
   end
-
-  # defp card_link(card) do
-  #   case card.exists do
-  #     true ->
-  #       {
-  #         "a",
-  #         [{"href", card.link_path}, {"title", card.title}],
-  #         [
-  #           card_cover(card),
-  #           card_title(card)
-  #         ]
-  #       }
-  #
-  #     false ->
-  #       [
-  #         card_cover(card),
-  #         card_title(card)
-  #       ]
-  #   end
-  # end
 
   defp card_cover(card) do
     {src, class} =
