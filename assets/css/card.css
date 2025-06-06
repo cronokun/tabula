@@ -1,52 +1,67 @@
-html {
-  font-family: "Verdana", "Geneva", sans-serif;
-  font-size: 11pt;
-  line-height: 1.5;
-}
-
 body {
-  margin-left: 25px;
-  margin-right: 25px;
-}
-
-.pre-header a, .pre-header span {
-  font-family: Helvetica Neue;
+  font-family: sans-serif;
   font-size: 11pt;
-  border-radius: 5px;
-  border: 1px solid #a1a1a1;
-  color: #676767;
-  display: inline-block;
-  margin-right: 8px;
-  padding: 2px 4px;
-  text-align: center;
-  width: max-content;
+  margin: 45px auto;
+  width: 1000px;
 }
 
-.list-tag {
-  font-weight: 500;
-}
-
-.edit-btn {
-  min-width: 50px;
-  text-decoration: none;
-}
-
-.edit-btn:hover {
-  background-color: #eaebec;
+h1 {
+  margin-block-start: 8px;
+  margin-block-end: 8px;
 }
 
 h2 {
-  font-weight: 200;
-  font-size: 1.4em;
+  font-weight: 400;
+  margin-block-start: 8px;
+  margin-block-end: 8px;
 }
 
-h1 + p {
-  margin: 0;
+.pre-header { display: none; }
+
+h1 + p:has(img),
+h1 + h2 + p:has(img) {
+  float: right;
+  margin: 0 0 0 32px;
 }
 
-h1 + p > img {
-  height: 500px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+h1 + p > img,
+h1 + h2 + p > img {
+  box-shadow: 0px 4px 8px #333;
+  max-width: 320px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+.tags span {
+  background-color: #f1f2f3;
+  border-radius: 4px;
+  color: #6c6c6c;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  margin-right: 4px;
+  padding: 2px 4px;
+}
+
+h3 + ol {
+  padding-inline-start: 0;
+  list-style-position: inside;
+}
+h3 + ol > li {
+  line-height: 1.5;
+}
+h3 + ol a.card-link {
+  color: black;
+  text-decoration: none;
+}
+h3 + ol a.card-link:hover {
+  text-decoration: underline;
+}
+h3 + ol a.current-card {
+  font-weight: 600;
 }
 
 dl {
@@ -56,7 +71,8 @@ dl {
 
 dl dt {
   font-weight: 600;
-  padding-right: 1em;
+  padding-right: 8px;
+  margin-block-end: 4px;
 }
 dl dt::after {
   content: ":"
@@ -66,38 +82,14 @@ dl dd {
   margin-inline-start: 0;
 }
 
-ol, ul {
-  padding-left: 20px;
-}
-
-ul {
-  list-style-type: square;
-}
-
-li + p { margin-block-start: 0; margin-block-end: 0; }
-
 ul.checklist {
   list-style-type: none;
   padding-left: 0;
 }
-
-.tags {
-  font-family: Helvetica Neue;
-  font-size: 11px;
-  font-weight: 500;
-  margin: 7px 0 5px 0;
+ul.checklist li {
+  line-height: 1.5;
 }
 
-.tags span {
-  display: inline-block;
-  background-color: #e2e2e2;
-  border-radius: 5px;
-  color: #333333;
-  margin-right: 2px;
-  line-height: 12px;
-  letter-spacing: 0.25px;
-  padding: 4px 5px;
+ul.checklist input[type="checkbox"] {
+  margin: 4px 8px 4px 0;
 }
-
-a.card-link { text-decoration: none; }
-a.card-link.current-card { font-weight: 600; }
