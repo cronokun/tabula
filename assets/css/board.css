@@ -63,13 +63,13 @@ h2 ~ span {
   border-bottom: 1px solid #eaebec;
 }
 
-body.books img {
+body.books img,
+body.movies img,
   height: auto;
   min-height: 300px;
   object-fit: fill;
 }
 
-body.movies img,
 body.tv-series img {
   height: 300px;
   object-fit: cover;
