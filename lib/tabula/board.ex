@@ -25,6 +25,7 @@ defmodule Tabula.Board do
       assets_source_path: Path.join([dir, "_images/"]),
       assets_target_path: Path.join([@release_dir, board_img_dir]),
       index_page_path: Path.join([@release_dir, board_path, "index.html"]),
+      icon_path: board_icon,
       lists:
         for list <- List.wrap(data["lists"]) do
           list_path = list["path"] || safe_path(list["name"])

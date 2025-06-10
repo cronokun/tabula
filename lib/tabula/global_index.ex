@@ -27,6 +27,7 @@ defmodule Tabula.GlobalIndex do
 
         %{
           name: data["board"],
+          icon: Path.join("/assets/images/", data["icon"]),
           lists: lists
         }
       end
@@ -68,13 +69,16 @@ defmodule Tabula.GlobalIndex do
     ]
   end
 
-  defp render_board(%{name: board, lists: lists}) do
+  defp render_board(%{name: board, lists: lists, icon: icon}) do
     {
       "section",
       [],
       [
+        {"a", [{"href", board_href(board)}, {"class", "board-link"}],
+         [
+           {"img", [{"src", icon}], []}
+         ]},
         {"h2", [], [board]},
-        {"a", [{"href", board_href(board)}], ["( board )"]},
         {"ul", [],
          [
            for list <- lists do
