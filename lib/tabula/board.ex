@@ -8,6 +8,13 @@ defmodule Tabula.Board do
     data = read_yaml(dir)
     board_name = data["board"]
     board_path = data["path"] || safe_path(board_name)
+
+    board_icon =
+      case data["icon"] do
+        nil -> nil
+        img -> Path.join("/assets/images", img)
+      end
+
     board_img_dir = Path.join(["/assets/images/", board_path])
 
     %{
@@ -40,6 +47,7 @@ defmodule Tabula.Board do
                   target_path: target,
                   link_path: link,
                   image_path: nil,
+                  default_image_path: board_icon,
                   image_base_dir: board_img_dir,
                   board_name: board_name,
                   list_name: list["name"],

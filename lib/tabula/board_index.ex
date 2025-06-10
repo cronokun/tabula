@@ -88,11 +88,7 @@ defmodule Tabula.BoardIndex do
   end
 
   defp card_cover(card) do
-    {src, class} =
-      case card.image_path do
-        nil -> {"/assets/images/no-cover.png", "no-cover"}
-        path -> {path, "cover"}
-      end
+    {src, class} = get_card_image(card)
 
     {
       "img",
@@ -100,6 +96,10 @@ defmodule Tabula.BoardIndex do
       []
     }
   end
+
+  defp get_card_image(%{image_path: src}) when is_binary(src), do: {src, "cover"}
+  defp get_card_image(%{default_image_path: src}) when is_binary(src), do: {src, "no-cover"}
+  defp get_card_image(_card), do: {"/assets/images/no-cover.png", "no-cover"}
 
   defp card_title(card) do
     title_tag = {"span", [{"class", "title"}], [card.title]}

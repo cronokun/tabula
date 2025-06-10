@@ -61,17 +61,14 @@ h2 ~ span {
   display: block;
   margin-bottom: 8px;
   border-bottom: 1px solid #eaebec;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 body.books img,
 body.movies img,
+body.tv-series img {
   height: auto;
   min-height: 300px;
-  object-fit: fill;
-}
-
-body.tv-series img {
-  height: 300px;
   object-fit: cover;
 }
 
@@ -79,6 +76,7 @@ body.books img.no-cover,
 body.movies img.no-cover,
 body.tv-series img.no-cover {
   object-fit: scale-down;
+  min-height: 300px;
 }
 
 .tags {
