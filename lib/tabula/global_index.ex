@@ -74,11 +74,11 @@ defmodule Tabula.GlobalIndex do
       "section",
       [],
       [
+        {"h2", [], [board]},
         {"a", [{"href", board_href(board)}, {"class", "board-link"}],
          [
            {"img", [{"src", icon}], []}
          ]},
-        {"h2", [], [board]},
         {"ul", [],
          [
            for list <- lists do
