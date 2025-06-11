@@ -16,13 +16,12 @@ defmodule Tabula.Markdown.PostProcessor do
     |> into_html_layout(context)
     |> expand_image_src(context)
     |> expand_links(context)
-    |> insert_pre_header(context)
     |> insert_tags(context)
   end
 
   # ---- AST manipulation ----
 
-  defp into_html_layout(inner_ast, %{"title" => title}) do
+  defp into_html_layout(inner_ast, %{"title" => title} = context) do
     [
       {"doctype", [], []},
       {"html", [{"lang", "en"}],
@@ -33,27 +32,30 @@ defmodule Tabula.Markdown.PostProcessor do
             {"link", [{"rel", "stylesheet"}, {"href", "/assets/css/card.css"}], []},
             {"title", [], [title]}
           ]},
-         {"body", [], inner_ast}
+         {"body", [],
+          [
+            navbar(context),
+            {"main", [], inner_ast}
+          ]}
        ]}
     ]
   end
 
-  defp insert_pre_header(ast, %{"list_name" => name, "source" => source}) do
-    tag1 = {"span", [{"class", "list-tag"}], [name]}
+  defp navbar(context) do
+    index_link = {"a", [{"href", "/index.html"}], ["Boards"]}
+    board_link = {"a", [{"href", context["board_url"]}], [context["board_name"]]}
+    list_link = {"a", [{"href", context["list_url"]}], [context["list_name"]]}
 
-    tag2 =
-      {"a", [{"href", open_in_mvim(source)}, {"class", "edit-btn"}], ["Edit card"]}
-
-    Floki.traverse_and_update(ast, fn
-      {"h1", attrs, [inner]} ->
+    {"nav", [],
+     [
+       {"ol", [],
         [
-          {"div", [{"class", "pre-header"}], [tag1, tag2]},
-          {"h1", attrs, [inner]}
-        ]
-
-      other ->
-        other
-    end)
+          {"li", [], [index_link]},
+          {"li", [], [board_link]},
+          {"li", [], [list_link]}
+        ]},
+       {"a", [{"href", open_in_mvim(context["source"])}, {"class", "edit-btn"}], ["Edit card"]}
+     ]}
   end
 
   defp insert_tags(ast, %{"tags" => tags}) do

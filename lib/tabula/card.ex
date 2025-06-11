@@ -36,7 +36,9 @@ defmodule Tabula.Card do
   defp process_context(context, card, ast) do
     context
     |> Map.put("board_name", card.board_name)
+    |> Map.put("board_url", card.board_page_url)
     |> Map.put("list_name", card.list_name)
+    |> Map.put("list_url", card.list_page_url)
     |> Map.put("source", card.source_path)
     |> Map.put_new("title", card.title)
     |> Map.put("id", card.id)

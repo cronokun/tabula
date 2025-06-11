@@ -51,7 +51,9 @@ defmodule Tabula.Board do
                   default_image_path: board_icon,
                   image_base_dir: board_img_dir,
                   board_name: board_name,
+                  board_page_url: board_page_url(board_name),
                   list_name: list["name"],
+                  list_page_url: list_page_url(board_name, list),
                   tags: [],
                   exists: false
                 }
@@ -79,5 +81,14 @@ defmodule Tabula.Board do
     |> String.replace(@ignore_chars, "")
     |> String.replace(@replace_chars, "-")
     |> String.downcase()
+  end
+
+  def board_page_url(board_name) do
+    Path.join(["/", safe_path(board_name), "/index.html"])
+  end
+
+  def list_page_url(board_name, list) do
+    list_id = list["path"] || safe_path(list["name"])
+    Path.join(["/", safe_path(board_name), "/index.html##{list_id}"])
   end
 end

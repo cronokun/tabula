@@ -1,7 +1,7 @@
 defmodule Tabula.GlobalIndex do
   @moduledoc "Creates a landing page with links to all boards."
 
-  alias Tabula.Board
+  import Tabula.Board, only: [board_page_url: 1, list_page_url: 2]
   alias Tabula.Markdown.Renderer
 
   @boards_dir Application.compile_env(:tabula, :base_boards_dir)
@@ -22,7 +22,7 @@ defmodule Tabula.GlobalIndex do
            {:ok, data} <- YamlElixir.read_from_string(yml) do
         lists =
           for list <- data["lists"] do
-            {list["name"], list_path(list, data["board"]), cards_count(list)}
+            {list["name"], list_page_url(data["board"], list), cards_count(list)}
           end
 
         %{
@@ -36,13 +36,6 @@ defmodule Tabula.GlobalIndex do
 
   defp cards_count(%{"cards" => nil}), do: 0
   defp cards_count(%{"cards" => cards}), do: length(cards)
-
-  # FIXME: replace this with `Board.build/1` or `Board.build_lists/1`?
-  defp list_path(list, board) do
-    board_path = Board.safe_path(board)
-    list_id = list["path"] || Board.safe_path(list["name"])
-    Path.join([board_path, "/index.html##{list_id}"])
-  end
 
   # ----  AST and HTML  --------
 
@@ -75,7 +68,7 @@ defmodule Tabula.GlobalIndex do
       [],
       [
         {"h2", [], [board]},
-        {"a", [{"href", board_href(board)}, {"class", "board-link"}],
+        {"a", [{"href", board_page_url(board)}, {"class", "board-link"}],
          [
            {"img", [{"src", icon}], []}
          ]},
@@ -91,8 +84,6 @@ defmodule Tabula.GlobalIndex do
 
   defp list_cards_counter({_name, _path, count}),
     do: {"span", [{"class", "count"}], [to_string(count)]}
-
-  defp board_href(board), do: Path.join([Board.safe_path(board), "/index.html"])
 
   defp list_href({name, path, _count}), do: {"a", [{"href", path}], [name]}
 end

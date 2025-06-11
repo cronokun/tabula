@@ -30,12 +30,7 @@ defmodule Tabula.BoardIndex do
            ]},
           {"body", [{"class", board.base_path}],
            [
-             {"h1", [],
-              [
-                board.title,
-                {"a", [{"href", open_in_mvim(board.source_path)}, {"class", "edit-btn"}],
-                 ["Edit board"]}
-              ]},
+             navbar(board),
              Enum.map(board.lists, &list_ast/1)
            ]}
         ]
@@ -120,5 +115,22 @@ defmodule Tabula.BoardIndex do
       tags ->
         {"p", [{"class", "tags"}], for(tag <- tags, do: {"span", [], tag})}
     end
+  end
+
+  defp navbar(board) do
+    index_link = {"a", [{"href", "/index.html"}], ["Boards"]}
+
+    edit_link =
+      {"a", [{"href", open_in_mvim(board.source_path)}, {"class", "edit-btn"}], ["Edit board"]}
+
+    {"nav", [],
+     [
+       {"ol", [],
+        [
+          {"li", [], [index_link]},
+          {"li", [{"class", "current"}], [board.title]}
+        ]},
+       edit_link
+     ]}
   end
 end
