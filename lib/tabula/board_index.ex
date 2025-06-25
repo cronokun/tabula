@@ -47,14 +47,17 @@ defmodule Tabula.BoardIndex do
   end
 
   defp list_header(list) do
-    cards_counter =
+    counter_text =
       case length(list.cards) do
-        0 -> []
-        1 -> {"span", [{"class", "count"}], ["1 card"]}
-        n -> {"span", [{"class", "count"}], ["#{n} cards"]}
+        0 -> "Nothing yet"
+        1 -> "1 card"
+        n -> "#{n} cards"
       end
 
-    [{"h2", [{"id", list.base_path}], [list.name]}, cards_counter]
+    [
+      {"h2", [{"id", list.base_path}], [list.name]},
+      {"span", [{"class", "count"}], [counter_text]}
+    ]
   end
 
   defp card_ast(card) do
