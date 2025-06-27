@@ -55,6 +55,7 @@ defmodule Tabula.Board do
                   list_name: list["name"],
                   list_page_url: list_page_url(board_name, list),
                   tags: [],
+                  rating: nil,
                   exists: false
                 }
                 |> tap(&Storage.put(&1))

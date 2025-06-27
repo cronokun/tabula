@@ -99,15 +99,26 @@ defmodule Tabula.BoardIndex do
   defp get_card_image(%{default_image_path: src}) when is_binary(src), do: {src, "no-cover"}
   defp get_card_image(_card), do: {"/assets/images/no-cover.png", "no-cover"}
 
-  defp card_title(card) do
-    title_tag = {"span", [{"class", "title"}], [card.title]}
-    subtitle_tag = {"span", [{"class", "subtitle"}], [card.subtitle]}
+  defp card_title(card) when is_nil(card.subtitle) do
+    [{"span", [{"class", "title"}], [card.title]}]
+  end
 
-    if card.subtitle do
-      [title_tag, subtitle_tag]
-    else
-      [title_tag]
-    end
+  defp card_title(card) when is_nil(card.rating) do
+    [
+      {"span", [{"class", "title"}], [card.title]},
+      {"span", [{"class", "subtitle"}], [card.subtitle]}
+    ]
+  end
+
+  defp card_title(card) do
+    [
+      {"span", [{"class", "title"}], [card.title]},
+      {"span", [{"class", "subtitle"}],
+       [
+         card.subtitle,
+         {"i", [{"class", "rating"}], [card.rating]}
+       ]}
+    ]
   end
 
   def card_tags(card) do

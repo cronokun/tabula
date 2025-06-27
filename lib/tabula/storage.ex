@@ -52,6 +52,7 @@ defmodule Tabula.Storage do
         title: data["title"],
         subtitle: data["subtitle"],
         image_path: data["image_path"],
+        rating: data["rating"],
         exists: true
       })
 
