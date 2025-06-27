@@ -7,9 +7,11 @@ defmodule Tabula.Markdown.PostProcessorTest do
 
   @context %{
     "board_name" => "Test Board",
+    "board_url" => "/test_board/index.html",
     "id" => "card1",
     "image_path" => "/assets/images/test_board/the-phoenician-scheme-2025.jpg",
     "list_name" => "Test List",
+    "list_url" => "/test_board/index.html#test_list",
     "source" => "list/card1.md",
     "title" => "The Phoenician Scheme (2025)",
     "tags" => []
@@ -37,11 +39,14 @@ defmodule Tabula.Markdown.PostProcessorTest do
                    ]},
                   {"body", [],
                    [
-                     _rest,
-                     {"h1", [], ["The Phoenician Scheme"]},
-                     {"p", [],
+                     {"nav", [], _navigation},
+                     {"main", [],
                       [
-                        "Wealthy businessman Zsa-zsa Korda appoints his only daughter, a nun, as sole heir to his estate. As Korda embarks on a new enterprise, they soon become the target of scheming tycoons, foreign terrorists and determined assassins."
+                        {"h1", [], ["The Phoenician Scheme"]},
+                        {"p", [],
+                         [
+                           "Wealthy businessman Zsa-zsa Korda appoints his only daughter, a nun, as sole heir to his estate. As Korda embarks on a new enterprise, they soon become the target of scheming tycoons, foreign terrorists and determined assassins."
+                         ]}
                       ]}
                    ]}
                 ]}
@@ -98,7 +103,7 @@ defmodule Tabula.Markdown.PostProcessorTest do
              ] = modify_ast(ast, @context) |> get_content()
     end
 
-    test "adds pre-header section with edit link" do
+    test "adds navigation section" do
       ast = [
         {"h1", [], ["The Dark Knight"]},
         {"p", [],
@@ -110,26 +115,48 @@ defmodule Tabula.Markdown.PostProcessorTest do
       context = %{
         "id" => "TheDarkKnight",
         "board_name" => "Movies",
+        "board_url" => "/movies/index.html",
         "list_name" => "Directed by Christopher Nolan",
+        "list_url" => "/movies/index.html#nolan",
         "image_path" => "/assets/images/movies/nolan/the-dark-knight-2008.jpg",
         "title" => "The Dark Knight (2008)",
         "source" => "Nolan/TheDarkKnight.md",
         "tags" => []
       }
 
+      [
+        {"doctype", [], []},
+        {"html", _,
+         [
+           {"head", _, _},
+           {"body", _,
+            [
+              {"nav", [], nav_content},
+              {"main", [], _main_content}
+            ]}
+         ]}
+      ] = modify_ast(ast, context)
+
       assert [
-               {"div", [{"class", "pre-header"}],
+               {
+                 "ol",
+                 [],
+                 [
+                   {"li", [], [{"a", [{"href", "/index.html"}], ["Boards"]}]},
+                   {"li", [], [{"a", [{"href", "/movies/index.html"}], ["Movies"]}]},
+                   {"li", [],
+                    [
+                      {"a", [{"href", "/movies/index.html#nolan"}],
+                       ["Directed by Christopher Nolan"]}
+                    ]}
+                 ]
+               },
+               {"a",
                 [
-                  {"span", [{"class", "list-tag"}], ["Directed by Christopher Nolan"]},
-                  {"a",
-                   [
-                     {"href", "mvim://open?url=file://Nolan/TheDarkKnight.md"},
-                     {"class", "edit-btn"}
-                   ], ["Edit card"]}
-                ]},
-               {"h1", _, _},
-               {"p", _, _}
-             ] = ast |> modify_ast(context) |> get_content()
+                  {"href", "mvim://open?url=file://Nolan/TheDarkKnight.md"},
+                  {"class", "edit-btn"}
+                ], ["Edit card"]}
+             ] = nav_content
     end
 
     test "adds card's tags section" do
@@ -148,7 +175,9 @@ defmodule Tabula.Markdown.PostProcessorTest do
       context = %{
         "id" => "TheDarkKnight",
         "board_name" => "Movies",
+        "board_url" => "/movies/index.html",
         "list_name" => "Directed by Christopher Nolan",
+        "list_url" => "/movies/index.html#nolan",
         "image_path" => "/assets/images/movies/nolan/the-dark-knight-2008.jpg",
         "title" => "The Dark Knight (2008)",
         "source" => "Nolan/TheDarkKnight.md",
@@ -156,7 +185,6 @@ defmodule Tabula.Markdown.PostProcessorTest do
       }
 
       assert [
-               {"div", [{"class", "pre-header"}], _},
                {"h1", _, _},
                {
                  "p",
@@ -182,7 +210,11 @@ defmodule Tabula.Markdown.PostProcessorTest do
       {"html", _,
        [
          {"head", _, _},
-         {"body", _, content}
+         {"body", _,
+          [
+            {"nav", [], _nav_content},
+            {"main", [], content}
+          ]}
        ]}
     ] = ast
 
