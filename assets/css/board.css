@@ -78,7 +78,8 @@ nav li:first-child::after {
 }
 
 .card span.title,
-.card span.subtitle {
+.card span.subtitle,
+.card span.rating {
   display: block;
   line-height: 1.25;
   margin: 4px 12px;
@@ -89,19 +90,25 @@ nav li:first-child::after {
   font-weight: 600;
 }
 
-.card span.subtitle {
+.card span.subtitle,
+.card span.rating {
   color: #181818;
   margin-top: 8px;
 }
 
-.card span.subtitle .rating {
+.card i.rating {
   font-family: "Helvetica Neue";
   font-style: normal;
   font-weight: 400;
   float: right;
 }
 
-.card span.subtitle .rating::before {
+.card i.rating.without-subtitle {
+  margin-left: -4px;
+  float: none;
+}
+
+.card .rating::before {
   content: "★";
   margin-right: 4px;
   color: #e5c872;
